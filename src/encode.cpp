@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "encode.h"
 
-[[cpp11::register]]
-std::string encode_vector(cpp11::sexp x) {
+[[cpp4r::register]]
+std::string encode_vector(cpp4r::sexp x) {
   std::string buffer;
 
   int n = Rf_length(x);
@@ -17,7 +17,7 @@ std::string encode_vector(cpp11::sexp x) {
 }
 
 void encode_row_in_buffer(
-  cpp11::list x,
+  cpp4r::list x,
   int i,
   std::string& buffer,
   std::string fieldDelim,
@@ -34,8 +34,8 @@ void encode_row_in_buffer(
   buffer.append(lineDelim);
 }
 
-[[cpp11::register]]
-std::string encode_data_frame(cpp11::list x) {
+[[cpp4r::register]]
+std::string encode_data_frame(cpp4r::list x) {
   if (Rf_length(x) == 0) {
     return ("");
   }
@@ -54,7 +54,7 @@ std::string encode_data_frame(cpp11::list x) {
 // Written by: tomoakin@kenroku.kanazawa-u.ac.jp
 // License: GPL-2
 
-void encode_in_buffer(cpp11::sexp x, int i, std::string& buffer) {
+void encode_in_buffer(cpp4r::sexp x, int i, std::string& buffer) {
   switch (TYPEOF(x)) {
   case LGLSXP:
     {
@@ -102,7 +102,7 @@ void encode_in_buffer(cpp11::sexp x, int i, std::string& buffer) {
     }
   case STRSXP:
     {
-      cpp11::sexp value = STRING_ELT(x, i);
+      cpp4r::sexp value = STRING_ELT(x, i);
       if (value == NA_STRING) {
         buffer.append("\\N");
       } else {
@@ -112,7 +112,7 @@ void encode_in_buffer(cpp11::sexp x, int i, std::string& buffer) {
       break;
     }
   default:
-    cpp11::stop(
+    cpp4r::stop(
       std::string("Don't know how to handle vector of type ") +
       Rf_type2char(TYPEOF(x)) + "."
     );

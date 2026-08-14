@@ -6,7 +6,7 @@
 class DbColumnDataSource;
 
 class DbColumnStorage {
-  cpp11::sexp data;
+  cpp4r::sexp data;
   int i;
   DATA_TYPE dt;
   const int n_max;
@@ -45,10 +45,10 @@ private:
   void fetch_value();
 
   // allocate()
-  static cpp11::sexp class_from_datatype(DATA_TYPE dt);
+  static cpp4r::sexp class_from_datatype(DATA_TYPE dt);
   static SEXP set_attribs_from_datatype(SEXP x, DATA_TYPE dt);
   static SEXP new_blob(SEXP x);
-  static SEXP new_hms(SEXP x);
+  static SEXP new_difftime(SEXP x);
 
   // copy_to()
   static void fill_default_value(SEXP data, DATA_TYPE dt, R_xlen_t i);

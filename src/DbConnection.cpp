@@ -17,7 +17,7 @@ DbConnection::DbConnection(
     : pCurrentResult_(NULL),
       transacting_(false),
       check_interrupts_(check_interrupts),
-      temp_schema_(cpp11::as_sexp(cpp11::r_string(NA_STRING))) {
+      temp_schema_(cpp4r::as_sexp(cpp4r::r_string(NA_STRING))) {
   size_t n = keys.size();
   std::vector<const char*> c_keys(n + 1), c_values(n + 1);
 
@@ -33,7 +33,7 @@ DbConnection::DbConnection(
   if (PQstatus(pConn_) != CONNECTION_OK) {
     std::string err = PQerrorMessage(pConn_);
     PQfinish(pConn_);
-    cpp11::stop(err);
+    cpp4r::stop(err);
   }
 
   PQsetClientEncoding(pConn_, "UTF-8");
@@ -66,7 +66,7 @@ void DbConnection::set_current_result(const DbResult* pResult) {
   // (even if (the new) pResult is NULL, we should try to reset the back-end.)
   if (pCurrentResult_ != NULL) {
     if (pResult != NULL) {
-      cpp11::warning(
+      cpp4r::warning(
         std::string("Closing open result set, cancelling previous query")
       );
     }
@@ -100,13 +100,13 @@ void DbConnection::cancel_query() {
   //  * the connection is invalid.
   PGcancel* cancel = PQgetCancel(pConn_);
   if (cancel == NULL) {
-    cpp11::stop(std::string("Connection error detected via PQgetCancel()"));
+    cpp4r::stop(std::string("Connection error detected via PQgetCancel()"));
   }
 
   // PQcancel() actually issues the cancel command to the backend.
   char errbuf[256];
   if (!PQcancel(cancel, errbuf, sizeof(errbuf))) {
-    cpp11::warning(std::string(errbuf));
+    cpp4r::warning(std::string(errbuf));
   }
 
   // free up the data structure allocated by PQgetCancel().
@@ -132,7 +132,7 @@ bool DbConnection::has_query() {
 Oid DbConnection::import_lo_from_file(std::string filename, Oid p_oid) {
   Oid lo_oid = lo_import_with_oid(pConn_, filename.c_str(), p_oid);
   if (lo_oid == InvalidOid) {
-    cpp11::stop(PQerrorMessage(pConn_));
+    cpp4r::stop(PQerrorMessage(pConn_));
   }
   return (lo_oid);
 }
@@ -140,11 +140,11 @@ Oid DbConnection::import_lo_from_file(std::string filename, Oid p_oid) {
 void DbConnection::export_lo_to_file(Oid p_oid, std::string filename) {
   int result = lo_export(pConn_, p_oid, filename.c_str());
   if (result != 1) {
-    cpp11::stop(PQerrorMessage(pConn_));
+    cpp4r::stop(PQerrorMessage(pConn_));
   }
 }
 
-void DbConnection::copy_data(std::string sql, cpp11::list df) {
+void DbConnection::copy_data(std::string sql, cpp4r::list df) {
   R_xlen_t p = df.size();
   if (p == 0) {
     return;
@@ -187,7 +187,7 @@ void DbConnection::copy_data(std::string sql, cpp11::list df) {
 
 void DbConnection::check_connection() {
   if (!pConn_) {
-    cpp11::stop(std::string("Disconnected"));
+    cpp4r::stop(std::string("Disconnected"));
   }
 
   ConnStatusType status = PQstatus(pConn_);
@@ -205,8 +205,8 @@ void DbConnection::check_connection() {
   conn_stop("Lost connection to database");
 }
 
-cpp11::list DbConnection::info() {
-  using namespace cpp11::literals;
+cpp4r::list DbConnection::info() {
+  using namespace cpp4r::literals;
   check_connection();
 
   const char* dbnm = PQdb(pConn_);
@@ -216,7 +216,7 @@ cpp11::list DbConnection::info() {
   int pver = PQprotocolVersion(pConn_);
   int sver = PQserverVersion(pConn_);
   int pid = PQbackendPID(pConn_);
-  return cpp11::list(
+  return cpp4r::list(
     { "dbname"_nm = dbnm == NULL ? "" : std::string(dbnm),
       "host"_nm = host == NULL ? "" : std::string(host),
       "port"_nm = port == NULL ? "" : std::string(port),
@@ -232,7 +232,7 @@ bool DbConnection::is_check_interrupts() const {
   return check_interrupts_;
 }
 
-SEXP DbConnection::quote_string(const cpp11::r_string& x) {
+SEXP DbConnection::quote_string(const cpp4r::r_string& x) {
   // Returns a single CHRSXP
   check_connection();
 
@@ -249,7 +249,7 @@ SEXP DbConnection::quote_string(const cpp11::r_string& x) {
   return escaped;
 }
 
-SEXP DbConnection::quote_identifier(const cpp11::r_string& x) {
+SEXP DbConnection::quote_identifier(const cpp4r::r_string& x) {
   // Returns a single CHRSXP
   check_connection();
 
@@ -263,7 +263,7 @@ SEXP DbConnection::quote_identifier(const cpp11::r_string& x) {
 }
 
 SEXP DbConnection::get_null_string() {
-  static cpp11::sexp null = Rf_mkCharCE("NULL", CE_UTF8);
+  static cpp4r::sexp null = Rf_mkCharCE("NULL", CE_UTF8);
   return null;
 }
 
@@ -275,11 +275,11 @@ void DbConnection::set_transacting(bool transacting) {
   transacting_ = transacting;
 }
 
-cpp11::strings DbConnection::get_temp_schema() const {
+cpp4r::strings DbConnection::get_temp_schema() const {
   return temp_schema_;
 }
 
-void DbConnection::set_temp_schema(cpp11::strings temp_schema) {
+void DbConnection::set_temp_schema(cpp4r::strings temp_schema) {
   temp_schema_ = temp_schema;
 }
 
@@ -288,7 +288,7 @@ void DbConnection::conn_stop(const char* msg) {
 }
 
 void DbConnection::conn_stop(PGconn* conn, const char* msg) {
-  cpp11::stop(std::string(msg) + " : " + PQerrorMessage(conn));
+  cpp4r::stop(std::string(msg) + " : " + PQerrorMessage(conn));
 }
 
 void DbConnection::cleanup_query() {
@@ -302,23 +302,23 @@ void DbConnection::cleanup_query() {
   finish_query(pConn_);
 }
 
-cpp11::list DbConnection::wait_for_notify(int timeout_secs) {
-  using namespace cpp11::literals;
+cpp4r::list DbConnection::wait_for_notify(int timeout_secs) {
+  using namespace cpp4r::literals;
   PGnotify* notify;
-  cpp11::writable::list out;
+  cpp4r::writable::list out;
   int socket = -1;
   fd_set input;
 
   while (TRUE) {
     // See if there's a notification waiting, if so return it
     if (!PQconsumeInput(pConn_)) {
-      cpp11::stop("Failed to consume input from the server");
+      cpp4r::stop("Failed to consume input from the server");
     }
     if ((notify = PQnotifies(pConn_)) != NULL) {
-      out = cpp11::list(
-        { "channel"_nm = cpp11::writable::strings({ notify->relname }),
-          "pid"_nm = cpp11::writable::integers({ notify->be_pid }),
-          "payload"_nm = cpp11::writable::strings({ notify->extra }) }
+      out = cpp4r::list(
+        { "channel"_nm = cpp4r::writable::strings({ notify->relname }),
+          "pid"_nm = cpp4r::writable::integers({ notify->be_pid }),
+          "payload"_nm = cpp4r::writable::strings({ notify->extra }) }
       );
       PQfreemem(notify);
       return out;
@@ -326,23 +326,23 @@ cpp11::list DbConnection::wait_for_notify(int timeout_secs) {
 
     if (socket != -1) {
       // Socket open, so already been round once, give up.
-      return cpp11::list();
+      return cpp4r::list();
     }
 
     // Open DB socket and wait for new data for at most (timeout_secs) seconds
     if ((socket = PQsocket(pConn_)) < 0) {
-      cpp11::stop("Failed to get connection socket");
+      cpp4r::stop("Failed to get connection socket");
     }
     FD_ZERO(&input);
     FD_SET(socket, &input);
     timeval timeout = { 0, 0 };
     timeout.tv_sec = timeout_secs;
     if (select(socket + 1, &input, NULL, NULL, &timeout) < 0) {
-      cpp11::stop("select() on the connection failed");
+      cpp4r::stop("select() on the connection failed");
     }
   }
 }
 
 void DbConnection::process_notice(void* /*This*/, const char* message) {
-  cpp11::message(message);
+  cpp4r::message(message);
 }

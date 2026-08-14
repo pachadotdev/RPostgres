@@ -6,7 +6,7 @@
 #include "DbConnection.h"
 #include "DbResult.h"
 
-namespace cpp11 {
+namespace cpp4r {
 
 template <typename T>
 enable_if_t<std::is_same<decay_t<T>, DbConnection*>::value, decay_t<T>> as_cpp(
@@ -30,6 +30,6 @@ enable_if_t<std::is_same<decay_t<T>, DbResult*>::value, decay_t<T>> as_cpp(
   return result;
 }
 
-}  // namespace cpp11
+}  // namespace cpp4r
 
 #endif

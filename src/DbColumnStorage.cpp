@@ -163,7 +163,7 @@ void DbColumnStorage::fetch_value() {
     break;
 
   default:
-    cpp11::stop("NYI");
+    cpp4r::stop("NYI");
   }
 }
 
@@ -195,20 +195,20 @@ SEXPTYPE DbColumnStorage::sexptype_from_datatype(DATA_TYPE dt) {
     return VECSXP;
 
   default:
-    cpp11::stop("Unknown type %d", dt);
+    cpp4r::stop("Unknown type %d", dt);
   }
 }
 
-cpp11::sexp DbColumnStorage::class_from_datatype(DATA_TYPE dt) {
+cpp4r::sexp DbColumnStorage::class_from_datatype(DATA_TYPE dt) {
   switch (dt) {
   case DT_INT64:
-    return cpp11::as_sexp("integer64");
+    return cpp4r::as_sexp("integer64");
   case DT_DATE:
-    return cpp11::as_sexp("Date");
+    return cpp4r::as_sexp("Date");
 
   case DT_DATETIME:
   case DT_DATETIMETZ:
-    return cpp11::as_sexp({ "POSIXct", "POSIXt" });
+    return cpp4r::as_sexp({ "POSIXct", "POSIXt" });
 
   default:
     return R_NilValue;
@@ -221,11 +221,11 @@ SEXP DbColumnStorage::set_attribs_from_datatype(SEXP x, DATA_TYPE dt) {
     return new_blob(x);
 
   case DT_TIME:
-    return new_hms(x);
+    return new_difftime(x);
 
   case DT_DATETIME:
     {
-      cpp11::sexp ro = x;
+      cpp4r::sexp ro = x;
       ro.attr("tzone") = "UTC";
       return ro;
     }
@@ -235,13 +235,17 @@ SEXP DbColumnStorage::set_attribs_from_datatype(SEXP x, DATA_TYPE dt) {
 }
 
 SEXP DbColumnStorage::new_blob(SEXP x) {
-  static cpp11::function new_blob = cpp11::package("blob")["new_blob"];
+  static cpp4r::function new_blob = cpp4r::package("blob")["new_blob"];
   return new_blob(x);
 }
 
-SEXP DbColumnStorage::new_hms(SEXP x) {
-  static cpp11::function new_hms = cpp11::package("hms")["new_hms"];
-  return new_hms(x);
+SEXP DbColumnStorage::new_difftime(SEXP x) {
+  // Base R `difftime` object (units = "secs"), no need to depend on the
+  // 'hms' package just to tag a TIME column's storage class/units.
+  cpp4r::sexp ret = x;
+  ret.attr("class") = "difftime";
+  ret.attr("units") = "secs";
+  return ret;
 }
 
 void DbColumnStorage::fill_default_value(SEXP data, DATA_TYPE dt, R_xlen_t i) {
@@ -275,7 +279,7 @@ void DbColumnStorage::fill_default_value(SEXP data, DATA_TYPE dt, R_xlen_t i) {
     break;
 
   case DT_UNKNOWN:
-    cpp11::stop("Not setting value for unknown data type");
+    cpp4r::stop("Not setting value for unknown data type");
   }
 }
 
@@ -349,7 +353,7 @@ void DbColumnStorage::copy_value(
       break;
 
     default:
-      cpp11::stop("NYI: default");
+      cpp4r::stop("NYI: default");
     }
   }
 }

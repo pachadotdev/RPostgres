@@ -8,7 +8,7 @@ $(info using $(PKG_CONFIG_NAME) from Rtools)
 PKG_CPPFLAGS := $(shell $(PKG_CONFIG) --cflags $(PKG_CONFIG_NAME)) $(EXTRA_CFLAGS)
 else
 RWINLIB = ../windows/libpq
-PKG_CPPFLAGS = -I$(RWINLIB)/include -Ivendor $(EXTRA_CFLAGS)
+PKG_CPPFLAGS = -I$(RWINLIB)/include $(EXTRA_CFLAGS)
 PKG_LIBS = -L$(RWINLIB)/lib$(R_ARCH) -L$(RWINLIB)/lib \
 	-lpq -lpgport -lpgcommon -lssl -lcrypto -lwsock32 -lsecur32 -lws2_32 -lgdi32 -lcrypt32 -lwldap32
 endif
