@@ -1,6 +1,7 @@
 # dbSendQuery()
 # dbSendStatement()
 # dbDataType()
+#' PostgreSQL database type
 #' @rdname dbDataType
 #' @usage NULL
 dbDataType_PqConnection <- function(dbObj, obj, ...) {

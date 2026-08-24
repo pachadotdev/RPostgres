@@ -15,11 +15,11 @@ dbQuoteLiteral_PqConnection <- function(conn, x, ...) {
     ret[is.na(x)] <- "NULL"
     SQL(paste0(ret, "::date"), names = names(ret))
   } else if (inherits(x, "POSIXt")) {
-    ret <- paste0("'", as.character(lubridate::with_tz(x, conn@timezone)), "'")
+    ret <- paste0("'", as.character(set_tzone(x, conn@timezone)), "'")
     ret[is.na(x)] <- "NULL"
-    SQL(paste0(ret, "::timestamp"), names = names(ret))
+    SQL(paste0(ret, "::timestamptz"), names = names(ret))
   } else if (inherits(x, "difftime")) {
-    ret <- paste0("'", as.character(hms::as_hms(x)), "'")
+    ret <- paste0("'", format_hms(x), "'")
     ret[is.na(x)] <- "NULL"
     SQL(paste0(ret, "::interval"), names = names(ret))
   } else if (inherits(x, "integer64")) {
@@ -28,16 +28,18 @@ dbQuoteLiteral_PqConnection <- function(conn, x, ...) {
     SQL(paste0(ret, "::int8"), names = names(ret))
   } else if (is.logical(x)) {
     ret <- as.character(x)
-    ret[is.na(ret)] <- "NULL::bool"
+    ret[is.na(x)] <- "NULL"
     SQL(ret, names = names(ret))
   } else if (is.integer(x)) {
     ret <- as.character(x)
     ret[is.na(x)] <- "NULL"
-    SQL(paste0(ret, "::int4"), names = names(ret))
+    SQL(ret, names = names(ret))
   } else if (is.numeric(x)) {
     ret <- as.character(x)
-    ret[is.na(x)] <- "NULL"
-    SQL(paste0(ret, "::float8"), names = names(ret))
+    ret[is.na(x) & !is.nan(x)] <- "NULL"
+    ret[is.infinite(x)] <- paste0("'", as.character(x[is.infinite(x)]), "'::float8")
+    ret[is.nan(x)] <- "'NaN'::float8"
+    SQL(ret, names = names(ret))
   } else if (is.list(x) || inherits(x, "blob")) {
     blob_data <- vcapply(
       x,

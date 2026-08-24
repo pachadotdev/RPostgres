@@ -1,17 +1,20 @@
 #' Postgres driver
 #'
 #' @export
-#' @useDynLib RPostgres, .registration = TRUE
 #' @import methods DBI
 Postgres <- function() {
   new("PqDriver")
 }
 
-#' PqDriver and methods.
+#' PqDriver class.
 #'
-#' @export
+#' @title PqDriver class
+#' @name PqDriver-class
 #' @keywords internal
 setClass("PqDriver", contains = "DBIDriver")
 
 # Set during installation time for the correct library
-PACKAGE_VERSION <- utils::packageVersion(utils::packageName())
+PACKAGE_VERSION <- tryCatch(
+  utils::packageVersion("rpsql"),
+  error = function(e) package_version("0.0.0")
+)

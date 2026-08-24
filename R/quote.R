@@ -1,6 +1,3 @@
-#' @include PqConnection.R
-NULL
-
 #' Quote postgres strings, identifiers, and literals
 #'
 #' If an object of class [Id] is used for `dbQuoteIdentifier()`, it needs
@@ -12,7 +9,7 @@ NULL
 #'   ignored).
 #' @examplesIf postgresHasDefault()
 #' library(DBI)
-#' con <- dbConnect(RPostgres::Postgres())
+#' con <- dbConnect(rpsql::Postgres())
 #'
 #' x <- c("a", "b c", "d'e", "\\f")
 #' dbQuoteString(con, x)

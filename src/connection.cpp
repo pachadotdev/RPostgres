@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "RPostgres_types.h"
+#include "rpsql_types.h"
 
 [[cpp4r::register]]
 int client_version() {

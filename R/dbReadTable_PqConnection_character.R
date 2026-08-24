@@ -35,8 +35,5 @@ dbReadTable_PqConnection_character <- function(
 
 #' @rdname postgres-tables
 #' @export
-setMethod(
-  "dbReadTable",
-  c("PqConnection", "character"),
-  dbReadTable_PqConnection_character
-)
+setMethod("dbReadTable", signature("PqConnection", "character"), dbReadTable_PqConnection_character)
+setMethod("dbReadTable", signature("PqConnection", "Id"), dbReadTable_PqConnection_character)

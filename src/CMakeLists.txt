@@ -3,7 +3,7 @@
 # Call:
 # quote(cynkrathis::use_cmakelists())
 
-add_library(RPostgres
+add_library(rpsql
   DbColumn.cpp
   DbColumn.h
   DbColumnDataSource.cpp
@@ -35,8 +35,8 @@ add_library(RPostgres
   PqResultSource.h
   PqUtils.cpp
   PqUtils.h
-  RPostgres-init.c
-  RPostgres_types.h
+  rpsql-init.c
+  rpsql_types.h
   cpp4r.cpp
   connection.cpp
   encode.cpp
@@ -51,7 +51,7 @@ add_library(RPostgres
 execute_process(COMMAND bash "-c" "Rscript -e 'cat(R.home(\"include\"))'" OUTPUT_VARIABLE R_INCLUDE)
 execute_process(COMMAND bash "-c" "Rscript -e 'x <- desc::desc_get_deps(); pkgs <- x$package[x$type == \"LinkingTo\"]; paths <- file.path(.libPaths()[[1]], pkgs, \"include\"); cat(paths, sep = \";\")'" OUTPUT_VARIABLE R_LIBRARIES_INCLUDES)
 
-target_include_directories(RPostgres PUBLIC
+target_include_directories(rpsql PUBLIC
   ${R_INCLUDE}
   ${R_LIBRARIES_INCLUDES}
 )

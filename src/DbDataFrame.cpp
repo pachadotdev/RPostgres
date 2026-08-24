@@ -4,8 +4,10 @@
 #include "DbColumnStorage.h"
 #include "DbColumnDataSource.h"
 #include "DbColumnDataSourceFactory.h"
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/range/algorithm_ext/for_each.hpp>
+
+using namespace boost::placeholders;
 
 DbDataFrame::DbDataFrame(
   DbColumnDataSourceFactory* factory_,

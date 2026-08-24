@@ -2,7 +2,7 @@
 #'
 #' @description [dbWriteTable()] executes several SQL statements that
 #' create/overwrite a table and fill it with values.
-#' \pkg{RPostgres} does not use parameterised queries to insert rows because
+#' \pkg{rpsql} does not use parameterised queries to insert rows because
 #' benchmarks revealed that this was considerably slower than using a single
 #' SQL string.
 #'
@@ -32,15 +32,13 @@
 #'   If missing, types are inferred with [DBI::dbDataType()]).
 #'   The types can only be specified with `append = FALSE`.
 #' @param copy If `TRUE`, serializes the data frame to a single string
-#'   and uses `COPY name FROM stdin`. This is fast, but not supported by
-#'   all postgres servers (e.g. Amazon's Redshift). If `FALSE`, generates
-#'   a single SQL string. This is slower, but always supported.
-#'   The default maps to `TRUE` on connections established via [Postgres()]
-#'   and to `FALSE` on connections established via [Redshift()].
+#'   and uses `COPY name FROM stdin`, which is often fast. If `FALSE`, generates
+#'   a single SQL string that is but widely supported.
+#'   The default maps to `TRUE`.
 #'
 #' @examplesIf postgresHasDefault()
 #' library(DBI)
-#' con <- dbConnect(RPostgres::Postgres())
+#' con <- dbConnect(rpsql::Postgres())
 #' dbListTables(con)
 #' dbWriteTable(con, "mtcars", mtcars, temporary = TRUE)
 #' dbReadTable(con, "mtcars")
@@ -65,9 +63,7 @@ sql_data_copy <- function(value, conn, row.names = FALSE) {
 
   value <- fix_posixt(value, conn@timezone)
 
-  value[is_difftime] <- lapply(value[is_difftime], function(col) {
-    format_keep_na(hms::as_hms(col))
-  })
+  value[is_difftime] <- lapply(value[is_difftime], format_hms)
   value[is_blob] <- lapply(
     value[is_blob],
     function(col) {
@@ -104,7 +100,7 @@ db_append_table <- function(conn, name, value, copy, warn) {
   value <- factor_to_string(value, warn = warn)
 
   if (is.null(copy)) {
-    copy <- !is(conn, "RedshiftConnection")
+    copy <- TRUE
   }
 
   if (copy) {
@@ -186,8 +182,6 @@ exists_table <- function(conn, id) {
 list_fields <- function(conn, id) {
   name <- id@name
 
-  is_redshift <- is(conn, "RedshiftConnection")
-
   # get relevant schema
   if ("schema" %in% names(name)) {
     # either the user provides the schema
@@ -203,23 +197,6 @@ list_fields <- function(conn, id) {
     only_first <- FALSE
 
     # or we have to look the table up in the schemas on the search path
-  } else if (is_redshift) {
-    # A variant of the Postgres version that uses CTEs and generate_series()
-    # instead of generate_subscripts(), the latter is not supported on Redshift
-    query <- paste0(
-      "(WITH ",
-      " n_schemas AS (",
-      "  SELECT max(regexp_count(setting, '[,]')) + 2 AS max_num ",
-      "  FROM pg_settings WHERE name='search_path'",
-      " ),",
-      " tt AS (",
-      "  SELECT generate_series(1, max_num) AS nr, current_schemas(true)::text[] ",
-      "  FROM n_schemas",
-      " )",
-      " SELECT nr, current_schemas[nr] AS table_schema FROM tt WHERE current_schemas[nr] <> 'pg_catalog'",
-      ") ttt"
-    )
-    only_first <- FALSE
   } else {
     # Get `current_schemas()` in search_path order
     # so $user and temp tables take precedence over the public schema (by default)
@@ -277,28 +254,6 @@ find_temp_schema <- function(conn, fail_if_missing = TRUE) {
   if (!is.na(connection_get_temp_schema(conn@ptr))) {
     return(connection_get_temp_schema(conn@ptr))
   }
-  if (is(conn, "RedshiftConnection")) {
-    temp_schema <- dbGetQuery(
-      conn,
-      paste0(
-        "SELECT current_schemas[1] as schema ",
-        "FROM (SELECT current_schemas(true)) ",
-        "WHERE current_schemas[1] LIKE 'pg_temp_%'"
-      )
-    )
-
-    if (nrow(temp_schema) == 1 && is.character(temp_schema[[1]])) {
-      connection_set_temp_schema(conn@ptr, temp_schema[[1]])
-      return(connection_get_temp_schema(conn@ptr))
-    } else {
-      # Temporary schema do not exist yet.
-      if (fail_if_missing) {
-        stopc("temporary schema does not exist")
-      }
-      return(NULL)
-    }
-  } else {
-    connection_set_temp_schema(conn@ptr, "pg_temp")
-    return(connection_get_temp_schema(conn@ptr))
-  }
+  connection_set_temp_schema(conn@ptr, "pg_temp")
+  return(connection_get_temp_schema(conn@ptr))
 }

@@ -1,10 +1,8 @@
-#' @include PqDriver.R
-NULL
-
-#' PqConnection and methods.
+#' PqConnection class.
 #'
+#' @title PqConnection class
+#' @name PqConnection-class
 #' @keywords internal
-#' @export
 setClass(
   "PqConnection",
   contains = "DBIConnection",
@@ -68,27 +66,21 @@ get_data_type <- function(obj) {
 check_tz <- function(timezone) {
   arg_name <- deparse(substitute(timezone))
 
-  tryCatch(
-    {
-      # Side effect: check if time zone is valid
-      lubridate::force_tz(as.POSIXct("2021-03-01 10:40"), timezone)
-      timezone
-    },
-    error = function(e) {
-      warning(
-        "Invalid time zone '",
-        timezone,
-        "', ",
-        "falling back to local time.\n",
-        "Set the `",
-        arg_name,
-        "` argument to a valid time zone.\n",
-        conditionMessage(e),
-        call. = FALSE
-      )
-      ""
-    }
+  if (identical(timezone, "") || timezone %in% OlsonNames()) {
+    return(timezone)
+  }
+
+  warning(
+    "Invalid time zone '",
+    timezone,
+    "', ",
+    "falling back to local time.\n",
+    "Set the `",
+    arg_name,
+    "` argument to a valid time zone.\n",
+    call. = FALSE
   )
+  ""
 }
 
 #' Wait for and return any notifications that return within timeout
@@ -112,14 +104,14 @@ check_tz <- function(timezone) {
 #' library(callr)
 #'
 #' # listen for messages on the grapevine
-#' db_listen <- dbConnect(RPostgres::Postgres())
+#' db_listen <- dbConnect(rpsql::Postgres())
 #' dbExecute(db_listen, "LISTEN grapevine")
 #'
 #' # Start another process, which sends a message after a delay
 #' rp <- r_bg(function() {
 #'   library(DBI)
 #'   Sys.sleep(0.3)
-#'   db_notify <- dbConnect(RPostgres::Postgres())
+#'   db_notify <- dbConnect(rpsql::Postgres())
 #'   dbExecute(db_notify, "NOTIFY grapevine, 'psst'")
 #'   dbDisconnect(db_notify)
 #' })
@@ -127,7 +119,7 @@ check_tz <- function(timezone) {
 #' # Sleep until we get the message
 #' n <- NULL
 #' while (is.null(n)) {
-#'   n <- RPostgres::postgresWaitForNotify(db_listen, 60)
+#'   n <- rpsql::postgresWaitForNotify(db_listen, 60)
 #' }
 #' stopifnot(n$payload == 'psst')
 #'

@@ -1,3 +1,4 @@
+#' @title PostgreSQL result class
 #' @rdname PqResult-class
 #' @usage NULL
 dbColumnInfo_PqResult <- function(res, ...) {

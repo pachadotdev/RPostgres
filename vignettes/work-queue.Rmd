@@ -1,21 +1,15 @@
 ---
-title: "Implementing a Work Queue using RPostgres"
+title: "Implementing a Work Queue using rpsql"
 author: "Jamie Lentin"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Implementing a Work Queue using RPostgres}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Implementing a Work Queue using rpsql}
+  %\VignetteEngine{litedown::vignette}
   \usepackage[utf8]{inputenc}
 ---
 
 ```{r, echo = FALSE}
 library(DBI)
-knitr::opts_chunk$set(
-  error = (Sys.getenv("IN_PKGDOWN") != "true"),
-  collapse = TRUE,
-  comment = "#>",
-  eval = RPostgres::postgresHasDefault()
-)
 con <- NULL
 rp <- NULL
 rs <- NULL
@@ -35,7 +29,7 @@ In this example, our work will be generating square roots. We'll keep track of t
 ```{r}
 library(DBI)
 
-con <- dbConnect(RPostgres::Postgres())
+con <- dbConnect(rpsql::Postgres())
 
 dbExecute(con, "DROP TABLE IF EXISTS sqroot_vignette_example;")
 dbExecute(con, "
@@ -71,7 +65,7 @@ This is known as a publish/subscribe architecture.
 We tell Postgres that we are interested in receiving messages using ``LISTEN``. For example:
 
 ```{r}
-con <- dbConnect(RPostgres::Postgres())
+con <- dbConnect(rpsql::Postgres())
 dbExecute(con, "LISTEN grapevine")
 ```
 
@@ -84,7 +78,7 @@ This will wait a bit, and use ``NOTIFY`` to send a message, then finish:
 rp <- callr::r_bg(function() {
   library(DBI)
   Sys.sleep(0.3)
-  db_notify <- dbConnect(RPostgres::Postgres())
+  db_notify <- dbConnect(rpsql::Postgres())
   dbExecute(db_notify, "NOTIFY grapevine, 'psst'")
   dbDisconnect(db_notify)
 })
@@ -97,7 +91,7 @@ The payload will contain the message from the other R process:
 # Sleep until we get the message
 n <- NULL
 while (is.null(n)) {
-  n <- RPostgres::postgresWaitForNotify(con)
+  n <- rpsql::postgresWaitForNotify(con)
 }
 n$payload
 ```
@@ -146,14 +140,14 @@ The following implements our worker as a function (again, this would be running 
 ```{r}
 worker <- function() {
   library(DBI)
-  db_worker <- dbConnect(RPostgres::Postgres())
+  db_worker <- dbConnect(rpsql::Postgres())
   on.exit(dbDisconnect(db_worker))
   dbExecute(db_worker, "LISTEN sqroot")
   dbExecute(db_worker, "LISTEN sqroot_shutdown")
 
   while (TRUE) {
     # Wait for new work to do
-    n <- RPostgres::postgresWaitForNotify(db_worker, 60)
+    n <- rpsql::postgresWaitForNotify(db_worker, 60)
     if (is.null(n)) {
       # If nothing to do, send notifications of any not up-to-date work
       dbExecute(db_worker, "
@@ -232,7 +226,7 @@ Sys.sleep(1)  # Give workers a chance to set themselves up
 Now our client can add some values to our table and notify the workers that there's something to do:
 
 ```{r}
-con <- dbConnect(RPostgres::Postgres())
+con <- dbConnect(rpsql::Postgres())
 
 add_sqroot <- function(in_val) {
   dbExecute(con, "

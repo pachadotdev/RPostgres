@@ -52,13 +52,12 @@ dbWriteTable_PqConnection_character_data.frame <- function(
     dbBegin(conn)
   }
 
-  if (!is(conn, "RedshiftConnection")) {
-    dbBegin(conn, name = "dbWriteTable")
-    # This is executed first, the `after` argument requires quite recent R
-    on.exit({
-      dbRollback(conn, name = "dbWriteTable")
-    })
-  }
+  dbBegin(conn, name = "dbWriteTable")
+
+  # This is executed first, the `after` argument requires quite recent R
+  on.exit({
+    dbRollback(conn, name = "dbWriteTable")
+  })
 
   if (need_transaction) {
     on.exit({
@@ -116,9 +115,8 @@ dbWriteTable_PqConnection_character_data.frame <- function(
     db_append_table(conn, name, value, copy, warn = FALSE)
   }
 
-  if (!is(conn, "RedshiftConnection")) {
-    dbCommit(conn, name = "dbWriteTable")
-  }
+  dbCommit(conn, name = "dbWriteTable")
+
   if (need_transaction) {
     dbCommit(conn)
   }
@@ -129,8 +127,5 @@ dbWriteTable_PqConnection_character_data.frame <- function(
 
 #' @rdname postgres-tables
 #' @export
-setMethod(
-  "dbWriteTable",
-  c("PqConnection", "character", "data.frame"),
-  dbWriteTable_PqConnection_character_data.frame
-)
+setMethod("dbWriteTable", signature("PqConnection", "character"), dbWriteTable_PqConnection_character_data.frame)
+setMethod("dbWriteTable", signature("PqConnection", "Id"), dbWriteTable_PqConnection_character_data.frame)

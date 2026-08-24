@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "RPostgres_types.h"
+#include "rpsql_types.h"
 #include "PqResult.h"
 
 [[cpp4r::register]]

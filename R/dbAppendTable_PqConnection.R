@@ -1,4 +1,5 @@
-#' @description [dbAppendTable()] is overridden because \pkg{RPostgres}
+#' @title PostgreSQL tables
+#' @description [dbAppendTable()] is overridden because \pkg{rpsql}
 #' uses placeholders of the form `$1`, `$2` etc. instead of `?`.
 #' @name postgres-tables
 #' @usage NULL

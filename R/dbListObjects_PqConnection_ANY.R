@@ -3,15 +3,10 @@
 #' @usage NULL
 dbListObjects_PqConnection_ANY <- function(conn, prefix = NULL, ...) {
   query <- NULL
-  is_redshift <- is(conn, "RedshiftConnection")
 
   if (is.null(prefix)) {
-    if (is_redshift) {
-      # On Redshift, UNION ALL with NULL::text fails
-      null_varchar <- "NULL::varchar(max)"
-    } else {
-      null_varchar <- "NULL::text"
-    }
+    null_varchar <- "NULL::text"
+    
     query <- paste0(
       "SELECT ",
       null_varchar,
@@ -77,8 +72,4 @@ dbListObjects_PqConnection_ANY <- function(conn, prefix = NULL, ...) {
 
 #' @rdname postgres-tables
 #' @export
-setMethod(
-  "dbListObjects",
-  c("PqConnection", "ANY"),
-  dbListObjects_PqConnection_ANY
-)
+setMethod("dbListObjects", "PqConnection", dbListObjects_PqConnection_ANY)

@@ -1,8 +1,8 @@
-#' PostgreSQL results.
+#' PqResult class.
 #'
+#' @title PqResult class
+#' @name PqResult-class
 #' @keywords internal
-#' @include PqConnection.R
-#' @export
 setClass(
   "PqResult",
   contains = "DBIResult",
@@ -14,9 +14,9 @@ setClass(
   )
 )
 
-#' Execute a SQL statement on a database connection
+#' @title Execute a SQL statement on a database connection
 #'
-#' To retrieve results a chunk at a time, use `dbSendQuery()`,
+#' @description To retrieve results a chunk at a time, use `dbSendQuery()`,
 #' `dbFetch()`, then `dbClearResult()`. Alternatively, if you want all the
 #' results (and they'll fit in memory) use `dbGetQuery()` which sends,
 #' fetches and clears for you.
@@ -31,7 +31,7 @@ setClass(
 #'   ignored).
 #' @examplesIf postgresHasDefault()
 #' library(DBI)
-#' db <- dbConnect(RPostgres::Postgres())
+#' db <- dbConnect(rpsql::Postgres())
 #' dbWriteTable(db, "usarrests", datasets::USArrests, temporary = TRUE)
 #'
 #' # Run query to get results as dataframe
@@ -90,18 +90,14 @@ fix_timezone <- function(ret, conn) {
   is_without_tz <- which(attr(ret, "without_tz"))
   if (length(is_without_tz) > 0) {
     ret[is_without_tz] <- lapply(ret[is_without_tz], function(x) {
-      x <- lubridate::with_tz(x, "UTC")
-      lubridate::force_tz(x, conn@timezone)
+      x <- set_tzone(x, "UTC")
+      force_tz(x, conn@timezone)
     })
   }
 
   is_datetime <- which(vapply(ret, inherits, "POSIXt", FUN.VALUE = logical(1)))
   if (length(is_datetime) > 0) {
-    ret[is_datetime] <- lapply(
-      ret[is_datetime],
-      lubridate::with_tz,
-      conn@timezone_out
-    )
+    ret[is_datetime] <- lapply(ret[is_datetime], set_tzone, tz = conn@timezone_out)
   }
 
   attr(ret, "without_tz") <- NULL
@@ -112,6 +108,33 @@ fix_timezone <- function(ret, conn) {
 set_class <- function(x, subclass = NULL) {
   class(x) <- c(subclass)
   x
+}
+
+# Base R replacement for lubridate::with_tz(): changes only the display
+# time zone of a POSIXct, the underlying instant (seconds since epoch)
+# is unaffected.
+set_tzone <- function(x, tz) {
+  attr(x, "tzone") <- tz
+  x
+}
+
+# Base R replacement for lubridate::force_tz(): keeps the same clock time
+# (year/month/day/hour/min/sec as currently displayed) but reinterprets it
+# as belonging to a new time zone, producing a different instant.
+force_tz <- function(x, tzone) {
+  if (length(x) == 0) {
+    return(.POSIXct(numeric(), tz = tzone))
+  }
+  lt <- as.POSIXlt(x)
+  ISOdatetime(
+    lt$year + 1900L,
+    lt$mon + 1L,
+    lt$mday,
+    lt$hour,
+    lt$min,
+    lt$sec,
+    tz = tzone
+  )
 }
 
 type_lookup <- function(x, conn) {
@@ -138,13 +161,14 @@ fix_posixt <- function(value, tz) {
     return(value)
   }
 
-  withr::with_options(
-    list(digits.secs = 6),
-    value[is_posixt] <- lapply(value[is_posixt], function(col) {
-      tz_col <- lubridate::with_tz(col, tz)
-      format_keep_na(tz_col, format = "%Y-%m-%dT%H:%M:%OS%z")
-    })
-  )
+  old_digits_secs <- getOption("digits.secs")
+  on.exit(options(digits.secs = old_digits_secs))
+  options(digits.secs = 6)
+
+  value[is_posixt] <- lapply(value[is_posixt], function(col) {
+    tz_col <- set_tzone(col, tz)
+    format_keep_na(tz_col, format = "%Y-%m-%dT%H:%M:%OS%z")
+  })
   value
 }
 
@@ -154,11 +178,7 @@ difftime_to_hms <- function(value) {
     return(value)
   }
 
-  # https://github.com/tidyverse/hms/issues/84
-  value[is_difftime] <- lapply(value[is_difftime], function(x) {
-    mode(x) <- "double"
-    hms::as_hms(x)
-  })
+  value[is_difftime] <- lapply(value[is_difftime], format_hms)
   value
 }
 

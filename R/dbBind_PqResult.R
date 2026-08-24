@@ -1,3 +1,4 @@
+#' @title PostgreSQL query
 #' @rdname postgres-query
 #' @usage NULL
 dbBind_PqResult <- function(res, params, ...) {

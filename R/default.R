@@ -1,7 +1,7 @@
 #' Check if default database is available.
 #'
-#' RPostgres examples and tests connect to a default database via
-#' `dbConnect(`[RPostgres::Postgres()]`)`. This function checks if that
+#' rpsql examples and tests connect to a default database via
+#' `dbConnect(`[rpsql::Postgres()]`)`. This function checks if that
 #' database is available, and if not, displays an informative message.
 #'
 #' @param ... Additional arguments passed on to [dbConnect()]
@@ -45,7 +45,7 @@ postgresDefault <- function(...) {
       connect_default(...)
     },
     error = function(...) {
-      testthat::skip("Test database not available")
+      stop("Test database not available")
     }
   )
 }

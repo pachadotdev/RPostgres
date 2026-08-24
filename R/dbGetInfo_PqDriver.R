@@ -1,3 +1,4 @@
+#' @title PostgreSQL driver class
 #' @rdname PqDriver-class
 #' @usage NULL
 dbGetInfo_PqDriver <- function(dbObj, ...) {

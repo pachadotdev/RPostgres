@@ -29,8 +29,5 @@ dbRemoveTable_PqConnection_character <- function(
 
 #' @rdname postgres-tables
 #' @export
-setMethod(
-  "dbRemoveTable",
-  c("PqConnection", "character"),
-  dbRemoveTable_PqConnection_character
-)
+setMethod("dbRemoveTable", signature("PqConnection", "character"), dbRemoveTable_PqConnection_character)
+setMethod("dbRemoveTable", signature("PqConnection", "Id"), dbRemoveTable_PqConnection_character)

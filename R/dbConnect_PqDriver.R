@@ -6,18 +6,16 @@
 #'
 #' @description
 #' `DBI::dbConnect()` establishes a connection to a database.
-#' Set `drv = Postgres()` to connect to a PostgreSQL(-ish) database. Use `drv =
-#' Redshift()` instead to connect to an AWS Redshift cluster.
+#' Set `drv = Postgres()` to connect to a PostgreSQL database
 #'
-#' Manually disconnecting a connection is not necessary with \pkg{RPostgres},
+#' Manually disconnecting a connection is not necessary with \pkg{rpsql},
 #' but still recommended;
 #' if you delete the object containing the connection, it will be automatically
 #' disconnected during the next GC with a warning.
 #'
 #' @param drv [DBI::DBIDriver-class]. Use [Postgres()] to connect to a
-#'   PostgreSQL(-ish) database or [Redshift()] to connect to an AWS Redshift
-#'   cluster. Use an existing [DBI::DBIConnection-class] object to clone an
-#'   existing connection.
+#'   PostgreSQL database. Use an existing [DBI::DBIConnection-class] object to
+#'   clone an existing connection.
 #' @param dbname Database name. If `NULL`, defaults to the user name.
 #'   Note that this argument can only contain the database name, it will not
 #'   be parsed as a connection string (internally, `expand_dbname` is set to
@@ -54,7 +52,7 @@
 #' @examplesIf postgresHasDefault()
 #' library(DBI)
 #' # Pass more arguments as necessary to dbConnect()
-#' con <- dbConnect(RPostgres::Postgres())
+#' con <- dbConnect(rpsql::Postgres())
 #' dbDisconnect(con)
 #' @usage NULL
 dbConnect_PqDriver <- function(
@@ -117,11 +115,12 @@ dbConnect_PqDriver <- function(
     ptr = ptr,
     bigint = bigint,
     timezone = character(),
+    timezone_out = character(),
     typnames = data.frame()
   )
   on.exit(dbDisconnect(conn))
 
-  # set datestyle workaround - https://github.com/r-dbi/RPostgres/issues/287
+  # set datestyle workaround - https://github.com/r-dbi/rpsql/issues/287
   dbExecute(conn, "SET datestyle to 'iso, mdy'", immediate = TRUE)
 
   if (!is.null(timezone)) {

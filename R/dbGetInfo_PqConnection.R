@@ -7,6 +7,7 @@
 # dbListFields()
 # dbRemoveTable()
 # dbGetInfo()
+#' @title PostgreSQL connection class
 #' @rdname PqConnection-class
 #' @usage NULL
 dbGetInfo_PqConnection <- function(dbObj, ...) {

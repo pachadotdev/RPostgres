@@ -9,7 +9,7 @@
 #' @return A boolean, indicating success or failure.
 #' @examplesIf postgresHasDefault()
 #' library(DBI)
-#' con <- dbConnect(RPostgres::Postgres())
+#' con <- dbConnect(rpsql::Postgres())
 #' dbWriteTable(con, "USarrests", datasets::USArrests, temporary = TRUE)
 #' dbGetQuery(con, 'SELECT count(*) from "USarrests"')
 #'
