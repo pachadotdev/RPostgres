@@ -11,3 +11,4 @@
 ^windows$
 ^Makefile$
 ^\.clang-format$
+^configure\.log$
