@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>A Crash Course on PostgreSQL for R Users • rpsql</title><link rel="stylesheet" href="../menu.css"><link rel="stylesheet" href="../content.css"><!-- MathJax Configuration --><script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: {'[+]': ['ams', 'newcommand', 'configmacros']}
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script><script id="MathJax-script" async src="../js/tex-svg.js"></script></head><body>
+<div class="main-container">
+<div id="menu">
+  <div>
+    <h1 style="text-align:center;">rpsql Documentation</h1>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="search-box" placeholder="Search..."></div>
+
+  <div class="search-container">
+    <button id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">Toggle theme</button>
+    <button id="font-decrease" title="Decrease font size" aria-label="Decrease font size">A-</button>
+    <button id="font-increase" title="Increase font size" aria-label="Increase font size">A+</button>
+  </div>
+
+  <div class="submenu">
+    <label style="border-bottom: 0;"><a style="padding-left: 0;" href="../index.html">Home 🏠</a></label>
+  </div>
+
+  <div class="submenu">
+    <label>On this page</label>
+    <a href="#motivation" class="toc-level-1">Motivation</a>
+    <a href="#nycflights13" class="toc-level-1">Nycflights13</a>
+    <a href="#sql-indexes" class="toc-level-1">SQL indexes</a>
+    <a href="#sql-conections" class="toc-level-1">SQL conections</a>
+    <a href="#creating-tables" class="toc-level-1">Creating tables</a>
+    <a href="#accessing-tables" class="toc-level-1">Accessing tables</a>
+    <a href="#appending-new-records" class="toc-level-1">Appending new records</a>
+    <a href="#appending-large-tables" class="toc-level-1">Appending large tables</a>
+    <a href="#using-base-r" class="toc-level-2">Using base R</a>
+  </div>
+
+</div>
+<div id="content">
+<div class="content-wrapper">
+        <div class="content-main">
+          <h1>A Crash Course on PostgreSQL for R Users</h1>
+
+
+
+<p><em>Adapted from my <a href="https://pacha.dev/blog/2020/08/09/postgresql-for-r-users/index.html">blog</a></em>.</p>
+<div id="motivation" class="section level1">
+<h1 id="motivation">Motivation</h1>
+<p>If, like me, you have your workflows that are well organized, even
+with tidy GitHub repositories and still you create a lot of CSV or RDS
+files to share periodical data (e.g., weekly or monthly sales), then you
+can benefit from using PostgreSQL (or any other SQL database engine such
+as MariaDB).</p>
+</div>
+<div id="nycflights13" class="section level1">
+<h1 id="nycflights13">Nycflights13</h1>
+<p>Let’s start with the <code>flights</code> table from the quite
+popular <code>nycflights13</code> package:</p>
+<pre class="r"><code>library(nycflights13)
+flights
+
+# # A tibble: 336,776 × 19
+#     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+#    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+#  1  2013     1     1      517            515         2      830            819
+#  2  2013     1     1      533            529         4      850            830
+#  3  2013     1     1      542            540         2      923            850
+#  4  2013     1     1      544            545        -1     1004           1022
+#  5  2013     1     1      554            600        -6      812            837
+#  6  2013     1     1      554            558        -4      740            728
+#  7  2013     1     1      555            600        -5      913            854
+#  8  2013     1     1      557            600        -3      709            723
+#  9  2013     1     1      557            600        -3      838            846
+# 10  2013     1     1      558            600        -2      753            745
+# # ℹ 336,766 more rows
+# # ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,
+# #   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+# #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+# # ℹ Use `print(n = ...)` to see more rows</code></pre>
+<p>Assume that you work at NYC airport and you are in charge of updating
+the <code>flights</code> table every day. Instead of creating one CSV
+file per day with flight records, the process can be better organized by
+appending new records to an existing SQL table.</p>
+<p><code>nycflights13</code> provides different tables besides
+<code>flights</code>. You can explore the details in <a href="https://r4ds.had.co.nz/relational-data.html">R4DS</a>. Because
+R4DS, a great book, uses the Tidyverse, here I will use
+<code>data.table</code> to show something similar in a different
+way.</p>
+<p>The relation between the <code>nycflights13</code> tables is
+summarised in the following diagram:</p>
+<p><img src="relational-nycflights.svg"></p>
+</div>
+<div id="sql-indexes" class="section level1">
+<h1 id="sql-indexes">SQL indexes</h1>
+<p>Skipping a lot of details, SQL creates copies of the tables that
+contain just a few columns which help to identify observations in order
+to be able to filter those observations in a faster way that without an
+index.</p>
+<p>For example, in the <code>month</code> table, the year column is
+really useful to create an index that boosts the speed of SQL operations
+similar to this <code>dplyr</code> statement:</p>
+<pre class="r"><code>library(data.table)
+flights &lt;- as.data.table(flights)
+flights[month == 3]
+
+#         year month   day dep_time sched_dep_time dep_delay arr_time
+#        &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;num&gt;    &lt;int&gt;
+#     1:  2013     3     1        4           2159       125      318
+#     2:  2013     3     1       50           2358        52      526
+#     3:  2013     3     1      117           2245       152      223
+#     4:  2013     3     1      454            500        -6      633
+#     5:  2013     3     1      505            515       -10      746
+#    ---
+# 28830:  2013     3    31     2349           2355        -6      333
+# 28831:  2013     3    31     2358           2359        -1      332
+# 28832:  2013     3    31       NA           1627        NA       NA
+# 28833:  2013     3    31       NA            600        NA       NA
+# 28834:  2013     3    31       NA            929        NA       NA
+#        sched_arr_time arr_delay carrier flight tailnum origin   dest air_time
+#                 &lt;int&gt;     &lt;num&gt;  &lt;char&gt;  &lt;int&gt;  &lt;char&gt; &lt;char&gt; &lt;char&gt;    &lt;num&gt;
+#     1:             56       142      B6     11  N706JB    JFK    FLL      166
+#     2:            438        48      B6    707  N794JB    JFK    SJU      198
+#     3:           2354       149      B6    608  N328JB    JFK    PWM       48
+#     4:            648       -15      US   1117  N177US    EWR    CLT       79
+#     5:            810       -24      UA    475  N527UA    EWR    IAH      199
+#    ---
+# 28830:            338        -5      B6    707  N657JB    JFK    SJU      202
+# 28831:            339        -7      B6    727  N608JB    JFK    BQN      195
+# 28832:           1734        NA      EV   4299  N17560    EWR    DCA       NA
+# 28833:            725        NA      EV   5689  N829AS    LGA    IAD       NA
+# 28834:           1220        NA      UA   1597    &lt;NA&gt;    EWR    EGE       NA
+#        distance  hour minute           time_hour
+#           &lt;num&gt; &lt;num&gt;  &lt;num&gt;              &lt;POSc&gt;
+#     1:     1069    21     59 2013-03-01 21:00:00
+#     2:     1598    23     58 2013-03-01 23:00:00
+#     3:      273    22     45 2013-03-01 22:00:00
+#     4:      529     5      0 2013-03-01 05:00:00
+#     5:     1400     5     15 2013-03-01 05:00:00
+#    ---
+# 28830:     1598    23     55 2013-03-31 23:00:00
+# 28831:     1576    23     59 2013-03-31 23:00:00
+# 28832:      199    16     27 2013-03-31 16:00:00
+# 28833:      229     6      0 2013-03-31 06:00:00
+# 28834:     1725     9     29 2013-03-31 09:00:00</code></pre>
+<p>To create indexes, let’s start differentiating between unique and
+non-unique indexes:</p>
+<pre class="r"><code>unique_index &lt;- list(
+  airlines = list("carrier"),
+  planes = list("tailnum")
+)
+
+index &lt;- list(
+  airports = list("faa"),
+  flights = list(c("year", "month", "day"), "carrier", "tailnum", "origin", "dest"),
+  weather = list(c("year", "month", "day"), "origin")
+)</code></pre>
+</div>
+<div id="sql-conections" class="section level1">
+<h1 id="sql-conections">SQL conections</h1>
+<p>Assume the following:</p>
+<ul><li>The NYC airport gave you access to a PostgreSQL database named
+<code>rpsql_test</code>.</li>
+<li>You have VPN access to it from <code>127.0.0.1</code> (or
+<code>localhost</code>) on port 5432.</li>
+<li>The user is
+`<code>and the password is</code>S4cr3tP4ssw0rd007`.</li>
+</ul><p><strong>Important: Database credentials (e.g., user and password)
+should be stored in your <code>~/.Rprofile</code> and never in your
+scripts!</strong></p>
+<p>You can use nano, vim or just <code>usethis::edit_r_environ()</code>
+to edit your R profile to add the credentials and then restart your R
+session to apply the changes. The file should be of the form:</p>
+<pre class="bash"><code>PGDATABASE="rpsql_test"
+PGPORT=5432
+PGUSER="postgres"
+PGPASSWORD="S4cr3tP4ssw0rd007"</code></pre>
+<p>To access and start creating tables to better organize your data, you
+need to open and close conections, and the <code>rpsql</code> package is
+really useful to do that and more:</p>
+<pre class="r"><code>library(DBI)
+library(rpsql)
+
+fun_connect &lt;- function() {
+  dbconect(
+    Postgres(),
+    dbname = Sys.getenv("PGDATABASE"),
+    user = Sys.getenv("PGUSER"),
+    password = Sys.getenv("PGPASSWORD"),
+    host = "localhost"
+  )
+}</code></pre>
+<p>By default, PostgreSQL uses the <code>public</code> schema in a
+databases, which you’ll write to. You can explore the existing tables in
+the <code>public</code> schema of <code>postgres</code> database by
+running:</p>
+<pre class="r"><code>schema &lt;- "public"
+
+con &lt;- fun_connect()
+remote_tables &lt;- dbGetQuery(
+  con,
+  sprintf("SELECT table_name  FROM information_schema.tables WHERE table_schema='%s'", schema)
+)
+dbDisconnect(con)
+
+remote_tables &lt;- as.character(remote_tables$table_name)
+remote_tables
+
+# character(0)</code></pre>
+<p>Because this is an example with a freshly created server just for the
+tutorial, the result is no existing tables in the database.</p>
+</div>
+<div id="creating-tables" class="section level1">
+<h1 id="creating-tables">Creating tables</h1>
+<p>Now you should be ready to start writing the tables from
+<code>nycflights13</code> to the database:</p>
+<pre class="r"><code>local_tables &lt;- utils::data(package = "nycflights13")$results[, "Item"]
+tables &lt;- setdiff(local_tables, remote_tables)
+
+for (table in tables) {
+  df &lt;- getExportedValue("nycflights13", table)
+
+  message("Creating table: ", table)
+
+  table_name &lt;- table
+
+  con &lt;- fun_connect()
+  dbWriteTable(con, table_name, df)
+  dbDisconnect(con)
+}
+
+# Creating table: airlines
+# Creating table: airports
+# Creating table: flights
+# Creating table: planes
+# Creating table: weather</code></pre>
+<p>This approach prevents overwriting in case that a table already
+exists, you can pass <code>overwrite = TRUE</code> to
+<code>dbWriteTable()</code>, but instead this appends new
+observations.</p>
+<p>For the indexes previously defined as lists, one possibility is:</p>
+<pre class="r"><code>con &lt;- fun_connect()
+
+for (table in names(unique_index)) {
+  for (columns in unique_index[[table]]) {
+    col_str &lt;- paste(columns, collapse = ", ")
+    idx_name &lt;- sprintf("unique_%s_%s", table, paste(columns, collapse = "_"))
+    sql &lt;- sprintf("CREATE UNIQUE INDEX %s ON %s (%s)", idx_name, table, col_str)
+    dbExecute(con, sql)
+  }
+}
+
+for (table in names(index)) {
+  for (columns in index[[table]]) {
+    col_str &lt;- paste(columns, collapse = ", ")
+    idx_name &lt;- sprintf("idx_%s_%s", table, paste(columns, collapse = "_"))
+    sql &lt;- sprintf("CREATE INDEX %s ON %s (%s)", idx_name, table, col_str)
+    dbExecute(con, sql)
+  }
+}
+
+dbDisconnect(con)</code></pre>
+</div>
+<div id="accessing-tables" class="section level1">
+<h1 id="accessing-tables">Accessing tables</h1>
+<p>Let’s say you need to count the observations per month and save the
+result locally:</p>
+<pre class="r"><code>con &lt;- fun_connect()
+
+obs_per_month &lt;- dbGetQuery(con, "select year, month, count(*) as n
+  from flights
+  group by year, month")
+
+dbDisconnect(con)
+
+obs_per_month
+
+#    year month     n
+# 1  2013     1 27004
+# 2  2013     2 24951
+# 3  2013     3 28834
+# 4  2013     4 28330
+# 5  2013     5 28796
+# 6  2013     6 28243
+# 7  2013     7 29425
+# 8  2013     8 29327
+# 9  2013     9 27574
+# 10 2013    10 28889
+# 11 2013    11 27268
+# 12 2013    12 28135</code></pre>
+<p>The result of the query is a <code>data.frame</code>, which can be
+saved as CSV file with, among other possibilities as any other local
+dataset.</p>
+</div>
+<div id="appending-new-records" class="section level1">
+<h1 id="appending-new-records">Appending new records</h1>
+<p>Let’s say you have a table <code>flights14</code> with records for
+the year 2014. To append those records to the existing
+<code>flights</code> table in the database, you need to run:</p>
+<pre class="r"><code>con &lt;- fun_connect()
+dbWriteTable(con, "flights", flights14, append = TRUE, overwrite = FALSE, row.names = FALSE)
+dbDisconnect(con)</code></pre>
+</div>
+<div id="appending-large-tables" class="section level1">
+<h1 id="appending-large-tables">Appending large tables</h1>
+<p>Let’s say your <code>flights14</code> contains 12,345,678 rows. A
+better approach than writing the full table at once is to divide it in
+parts of 2,500,000 rows (or another smaller number).</p>
+<div id="using-base-r" class="section level2">
+<h2 id="using-base-r">Using base R</h2>
+<pre class="r"><code>N &lt;- 2500000
+starts &lt;- seq(1L, nrow(flights14), by = N)
+
+con &lt;- fun_connect()
+
+for (j in seq_along(starts)) {
+  message(sprintf("Writing fragment %s of %s", j, length(starts)))
+  end &lt;- min(starts[j] + N - 1L, nrow(flights14))
+  dbWriteTable(con, "flights", flights14[starts[j]:end], append = TRUE, overwrite = FALSE, row.names = FALSE)
+}
+
+dbDisconnect(con)</code></pre>
+</div>
+</div>
+        </div>
+        <footer><p id="last-updated">Loading...</p>
+</footer><script src="../js/footer.js"></script><script src="../js/theme.js"></script><script src="../js/search.js"></script><script src="../js/fontsize.js"></script></div>
+</div>
+</div>
+</body></html>
+

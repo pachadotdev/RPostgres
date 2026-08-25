@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>dbConnect_PqDriver • rpsql</title><link rel="stylesheet" href="../menu.css"><link rel="stylesheet" href="../content.css"><!-- MathJax Configuration --><script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: {'[+]': ['ams', 'newcommand', 'configmacros']}
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script><script id="MathJax-script" async src="../js/tex-svg.js"></script></head><body>
+<div class="main-container">
+<div id="menu">
+  <div>
+    <h1 style="text-align:center;">rpsql Documentation</h1>
+  </div>
+
+  <div class="search-container">
+    <input type="text" id="search-box" placeholder="Search..."></div>
+
+  <div class="search-container">
+    <button id="theme-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">Toggle theme</button>
+    <button id="font-decrease" title="Decrease font size" aria-label="Decrease font size">A-</button>
+    <button id="font-increase" title="Increase font size" aria-label="Increase font size">A+</button>
+  </div>
+
+  <div class="submenu">
+    <label style="border-bottom: 0;"><a style="padding-left: 0;" href="../index.html">Home 🏠</a></label>
+  </div>
+
+
+  <div class="submenu">
+    <label>Functions</label>
+    <a href="../reference/postgresHasDefault.html">postgresHasDefault</a>
+    <a href="../reference/postgresDefault.html">postgresDefault</a>
+    <a href="../reference/postgresWaitForNotify.html">postgresWaitForNotify</a>
+    <a href="../reference/postgresIsTransacting.html">postgresIsTransacting</a>
+    <a href="../reference/postgresImportLargeObject.html">postgresImportLargeObject</a>
+    <a href="../reference/postgresExportLargeObject.html">postgresExportLargeObject</a>
+    <a href="../reference/Postgres.html">Postgres</a>
+  </div>
+
+  <div class="submenu">
+    <label>Vignettes</label>
+    <a href="../vignettes/work-queue.html">A Crash Course on PostgreSQL for R Users</a>
+  </div>
+
+</div>
+<div id="content">
+<div class="content-wrapper">
+        <div class="content-main">
+
+<table style="width: 100%;"><tr><td>Postgres {rpsql}</td><td style="text-align: right;">R Documentation</td></tr></table><h2>Connect to a PostgreSQL database</h2>
+
+<h3>Description</h3>
+
+<p>'DBI::dbConnect()' establishes a connection to a database.
+Set 'drv = Postgres()' to connect to a PostgreSQL database
+</p>
+<p>Manually disconnecting a connection is not necessary with <span class="pkg">rpsql</span>,
+but still recommended;
+if you delete the object containing the connection, it will be automatically
+disconnected during the next GC with a warning.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre><code class="language-R">## S4 method for signature 'PqDriver'
+dbConnect(
+  drv,
+  dbname = NULL,
+  host = NULL,
+  port = NULL,
+  password = NULL,
+  user = NULL,
+  service = NULL,
+  ...,
+  bigint = c("integer64", "integer", "numeric", "character"),
+  check_interrupts = FALSE,
+  timezone = "UTC",
+  timezone_out = NULL
+)
+## S4 method for signature 'PqConnection'
+dbDisconnect(conn, ...)
+Postgres()
+</code></pre>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation"><tr><td><code id="drv">drv</code></td>
+<td>
+[DBI::DBIDriver-class]. Use [Postgres()] to connect to a
+PostgreSQL database. Use an existing [DBI::DBIConnection-class] object to
+clone an existing connection.
+</td></tr><tr><td><code id="dbname">dbname</code></td>
+<td>
+Database name. If 'NULL', defaults to the user name.
+Note that this argument can only contain the database name, it will not
+be parsed as a connection string (internally, 'expand_dbname' is set to
+'false' in the call to
+['PQconnectdbParams()'](https://www.postgresql.org/docs/current/libpq-connect.html)).
+</td></tr><tr><td><code id="user">user</code></td>
+<td>
+User name and password. If 'NULL', will be
+retrieved from 'PGUSER' and 'PGPASSWORD' envvars, or from the
+appropriate line in '~/.pgpass'. See
+&lt;https://www.postgresql.org/docs/current/libpq-pgpass.html&gt; for
+more details.
+</td></tr><tr><td><code id="password">password</code></td>
+<td>
+User name and password. If 'NULL', will be
+retrieved from 'PGUSER' and 'PGPASSWORD' envvars, or from the
+appropriate line in '~/.pgpass'. See
+&lt;https://www.postgresql.org/docs/current/libpq-pgpass.html&gt; for
+more details.
+</td></tr><tr><td><code id="host">host</code></td>
+<td>
+Host and port. If 'NULL', will be retrieved from
+'PGHOST' and 'PGPORT' env vars.
+</td></tr><tr><td><code id="port">port</code></td>
+<td>
+Host and port. If 'NULL', will be retrieved from
+'PGHOST' and 'PGPORT' env vars.
+</td></tr><tr><td><code id="service">service</code></td>
+<td>
+Name of service to connect as.  If 'NULL', will be
+ignored.  Otherwise, connection parameters will be loaded from the pg_service.conf
+file and used.  See &lt;https://www.postgresql.org/docs/current/libpq-pgservice.html&gt;
+for details on this file and syntax.
+</td></tr><tr><td><code id="...">...</code></td>
+<td>
+Other name-value pairs that describe additional connection
+options as described at
+&lt;https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PARAMKEYWORDS&gt;
+</td></tr><tr><td><code id="bigint">bigint</code></td>
+<td>
+The R type that 64-bit integer types should be mapped to,
+default is [bit64::integer64], which allows the full range of 64 bit
+integers.
+</td></tr><tr><td><code id="check_interrupts">check_interrupts</code></td>
+<td>
+Should user interrupts be checked during the query execution (before
+first row of data is available)? Setting to 'TRUE' allows interruption of queries
+running too long.
+</td></tr><tr><td><code id="timezone">timezone</code></td>
+<td>
+Sets the timezone for the connection. The default is '"UTC"'.
+If ‘NULL' then no timezone is set, which defaults to the server’s time zone.
+</td></tr><tr><td><code id="timezone_out">timezone_out</code></td>
+<td>
+The time zone returned to R, defaults to 'timezone'.
+If you want to display datetime values in the local timezone,
+set to [Sys.timezone()] or '""'.
+This setting does not change the time values returned, only their display.
+</td></tr><tr><td><code id="conn">conn</code></td>
+<td>
+Connection to disconnect.
+</td></tr></table></div>
+        </div>
+        <footer><p id="last-updated">Loading...</p>
+</footer><script src="../js/footer.js"></script><script src="../js/theme.js"></script><script src="../js/search.js"></script><script src="../js/fontsize.js"></script></div>
+</div>
+
+</body></html>
+
