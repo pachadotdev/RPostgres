@@ -1,5 +1,11 @@
 #' @rdname postgres-tables
-#' @usage NULL
+#' @param row.names Whether to add row names as a column. Use `FALSE`
+#'   to discard row names.
+#' @usage \S4method{dbWriteTable}{PqConnection,character}(
+#'   conn, name, value, ...,
+#'   row.names = FALSE, overwrite = FALSE, append = FALSE,
+#'   field.types = NULL, temporary = FALSE, copy = NULL
+#' )
 dbWriteTable_PqConnection_character_data.frame <- function(
   conn,
   name,
@@ -126,6 +132,7 @@ dbWriteTable_PqConnection_character_data.frame <- function(
 }
 
 #' @rdname postgres-tables
+#' @aliases dbWriteTable,PqConnection,character-method dbWriteTable,PqConnection,Id-method
 #' @export
 setMethod("dbWriteTable", signature("PqConnection", "character"), dbWriteTable_PqConnection_character_data.frame)
 setMethod("dbWriteTable", signature("PqConnection", "Id"), dbWriteTable_PqConnection_character_data.frame)

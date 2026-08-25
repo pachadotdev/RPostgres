@@ -1,8 +1,9 @@
 #' @title PostgreSQL tables
 #' @description [dbAppendTable()] is overridden because \pkg{rpsql}
 #' uses placeholders of the form `$1`, `$2` etc. instead of `?`.
+#' @param row.names Must be `NULL`.
 #' @name postgres-tables
-#' @usage NULL
+#' @usage \S4method{dbAppendTable}{PqConnection}(conn, name, value, copy = NULL, ..., row.names = NULL)
 dbAppendTable_PqConnection <- function(
   conn,
   name,
@@ -17,5 +18,6 @@ dbAppendTable_PqConnection <- function(
 }
 
 #' @rdname postgres-tables
+#' @aliases dbAppendTable,PqConnection-method
 #' @export
 setMethod("dbAppendTable", "PqConnection", dbAppendTable_PqConnection)

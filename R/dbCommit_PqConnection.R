@@ -1,5 +1,5 @@
 #' @rdname postgres-transactions
-#' @usage NULL
+#' @usage \S4method{dbCommit}{PqConnection}(conn, ..., name = NULL)
 dbCommit_PqConnection <- function(conn, ..., name = NULL) {
   if (is.null(name)) {
     if (!connection_is_transacting(conn@ptr)) {
@@ -14,5 +14,6 @@ dbCommit_PqConnection <- function(conn, ..., name = NULL) {
 }
 
 #' @rdname postgres-transactions
+#' @aliases dbCommit,PqConnection-method
 #' @export
 setMethod("dbCommit", "PqConnection", dbCommit_PqConnection)

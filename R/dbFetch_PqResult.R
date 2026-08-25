@@ -1,9 +1,10 @@
 #' @param res Code a [PqResult-class] produced by
 #'   [DBI::dbSendQuery()].
 #' @param n Number of rows to return. If less than zero returns all rows.
-#' @inheritParams DBI::sqlRownamesToColumn
+#' @param row.names Whether to convert row names to a column. Use `FALSE`
+#'   to discard row names.
 #' @rdname postgres-query
-#' @usage NULL
+#' @usage \S4method{dbFetch}{PqResult}(res, n = -1, ..., row.names = FALSE)
 dbFetch_PqResult <- function(res, n = -1, ..., row.names = FALSE) {
   if (length(n) != 1) {
     stopc("n must be scalar")
@@ -25,5 +26,6 @@ dbFetch_PqResult <- function(res, n = -1, ..., row.names = FALSE) {
 }
 
 #' @rdname postgres-query
+#' @aliases dbFetch,PqResult-method
 #' @export
 setMethod("dbFetch", "PqResult", dbFetch_PqResult)

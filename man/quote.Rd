@@ -2,19 +2,22 @@
 % Please edit documentation in dbQuoteIdentifier_PqConnection_character.R
 \name{quote}
 \alias{dbQuoteIdentifier_PqConnection}
-\alias{dbQuoteIdentifier}
+\alias{dbQuoteIdentifier,PqConnection,character-method}
+\alias{dbQuoteIdentifier,PqConnection,SQL-method}
+\alias{dbQuoteIdentifier,PqConnection,Id-method}
 \alias{dbQuoteLiteral_PqConnection}
-\alias{dbQuoteLiteral}
+\alias{dbQuoteLiteral,PqConnection-method}
 \alias{dbQuoteString_PqConnection}
-\alias{dbQuoteString}
+\alias{dbQuoteString,PqConnection,character-method}
+\alias{dbQuoteString,PqConnection,SQL-method}
 \alias{dbUnquoteIdentifier_PqConnection}
-\alias{dbUnquoteIdentifier}
+\alias{dbUnquoteIdentifier,PqConnection-method}
 \title{PostgreSQL quote}
 \usage{
-NULL
-NULL
-NULL
-NULL
+\S4method{dbQuoteIdentifier}{PqConnection,character}(conn, x, ...)
+\S4method{dbQuoteLiteral}{PqConnection}(conn, x, ...)
+\S4method{dbQuoteString}{PqConnection,character}(conn, x, ...)
+\S4method{dbUnquoteIdentifier}{PqConnection}(conn, x, ...)
 }
 
 \arguments{

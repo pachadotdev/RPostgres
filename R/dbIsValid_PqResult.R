@@ -5,5 +5,6 @@ dbIsValid_PqResult <- function(dbObj, ...) {
 }
 
 #' @rdname PqResult-class
+#' @aliases dbIsValid,PqResult-method
 #' @export
 setMethod("dbIsValid", "PqResult", dbIsValid_PqResult)

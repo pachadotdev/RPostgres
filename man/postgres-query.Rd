@@ -2,22 +2,22 @@
 % Please edit documentation in dbBind_PqResult.R
 \name{postgres-query}
 \alias{dbBind_PqResult}
-\alias{dbBind}
+\alias{dbBind,PqResult-method}
 \alias{dbClearResult_PqResult}
-\alias{dbClearResult}
+\alias{dbClearResult,PqResult-method}
 \alias{dbFetch_PqResult}
-\alias{dbFetch}
+\alias{dbFetch,PqResult-method}
 \alias{dbHasCompleted_PqResult}
-\alias{dbHasCompleted}
+\alias{dbHasCompleted,PqResult-method}
 \alias{dbSendQuery_PqConnection}
-\alias{dbSendQuery}
+\alias{dbSendQuery,PqConnection-method}
 \title{PostgreSQL query}
 \usage{
-NULL
-NULL
-NULL
-NULL
-NULL
+\S4method{dbBind}{PqResult}(res, params, ...)
+\S4method{dbClearResult}{PqResult}(res, ...)
+\S4method{dbFetch}{PqResult}(res, n = -1, ..., row.names = FALSE)
+\S4method{dbHasCompleted}{PqResult}(res, ...)
+\S4method{dbSendQuery}{PqConnection}(conn, statement, params = NULL, ..., immediate = FALSE)
 }
 
 \arguments{
@@ -25,6 +25,9 @@ NULL
   [DBI::dbSendQuery()].}
 
 \item{n}{Number of rows to return. If less than zero returns all rows.}
+
+\item{row.names}{Whether to convert row names to a column. Use `FALSE`
+  to discard row names.}
 
 \item{immediate}{If `TRUE`, uses the `PGsendQuery()` API instead of `PGprepare()`.
   This allows to pass multiple statements and turns off the ability to pass parameters.}

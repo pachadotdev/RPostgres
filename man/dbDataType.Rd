@@ -2,12 +2,13 @@
 % Please edit documentation in dbDataType_PqConnection.R
 \name{dbDataType}
 \alias{dbDataType_PqConnection}
-\alias{dbDataType}
+\alias{dbDataType,PqConnection-method}
 \alias{dbDataType_PqDriver}
+\alias{dbDataType,PqDriver-method}
 \title{PostgreSQL database type}
 \usage{
-NULL
-NULL
+\S4method{dbDataType}{PqConnection}(dbObj, obj, ...)
+\S4method{dbDataType}{PqDriver}(dbObj, obj, ...)
 }
 
 \arguments{

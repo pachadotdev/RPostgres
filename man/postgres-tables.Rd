@@ -2,37 +2,51 @@
 % Please edit documentation in dbAppendTable_PqConnection.R
 \name{postgres-tables}
 \alias{dbAppendTable_PqConnection}
-\alias{dbAppendTable}
+\alias{dbAppendTable,PqConnection-method}
 \alias{dbExistsTable_PqConnection}
-\alias{dbExistsTable}
+\alias{dbExistsTable,PqConnection,character-method}
+\alias{dbExistsTable,PqConnection,Id-method}
 \alias{dbListFields_PqConnection}
-\alias{dbListFields}
+\alias{dbListFields,PqConnection,character-method}
+\alias{dbListFields,PqConnection,Id-method}
 \alias{dbListObjects_PqConnection_ANY}
-\alias{dbListObjects}
+\alias{dbListObjects,PqConnection-method}
 \alias{dbListTables_PqConnection}
-\alias{dbListTables}
+\alias{dbListTables,PqConnection-method}
 \alias{dbReadTable_PqConnection_character}
-\alias{dbReadTable}
+\alias{dbReadTable,PqConnection,character-method}
+\alias{dbReadTable,PqConnection,Id-method}
 \alias{dbRemoveTable_PqConnection_character}
-\alias{dbRemoveTable}
+\alias{dbRemoveTable,PqConnection,character-method}
+\alias{dbRemoveTable,PqConnection,Id-method}
 \alias{dbWriteTable_PqConnection_character_data.frame}
-\alias{dbWriteTable}
+\alias{dbWriteTable,PqConnection,character-method}
+\alias{dbWriteTable,PqConnection,Id-method}
 \alias{sqlData_PqConnection}
-\alias{sqlData}
+\alias{sqlData,PqConnection-method}
 \title{PostgreSQL tables}
 \usage{
-NULL
-NULL
-NULL
-NULL
-NULL
-NULL
-NULL
-NULL
+\S4method{dbAppendTable}{PqConnection}(conn, name, value, copy = NULL, ..., row.names = NULL)
+\S4method{dbExistsTable}{PqConnection,character}(conn, name, ...)
+\S4method{dbListFields}{PqConnection,character}(conn, name, ...)
+\S4method{dbListObjects}{PqConnection}(conn, prefix = NULL, ...)
+\S4method{dbListTables}{PqConnection}(conn, ...)
+\S4method{dbReadTable}{PqConnection,character}(conn, name, ..., check.names = TRUE, row.names = FALSE)
+\S4method{dbRemoveTable}{PqConnection,character}(conn, name, ..., temporary = FALSE, fail_if_missing = TRUE)
+\S4method{dbWriteTable}{PqConnection,character}(
+  conn, name, value, ...,
+  row.names = FALSE, overwrite = FALSE, append = FALSE,
+  field.types = NULL, temporary = FALSE, copy = NULL
+)
 NULL
 }
 
 \arguments{
+\item{row.names}{Must be `NULL`.}
+
+\item{prefix}{A [DBI::Id-class] object identifying a schema to list
+  objects within, or `NULL` to list all tables and schemas.}
+
 \item{check.names}{If `TRUE`, the default, column names will be
   converted to valid R identifiers.}
 

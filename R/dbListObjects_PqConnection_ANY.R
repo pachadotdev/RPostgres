@@ -1,6 +1,7 @@
-#' @inheritParams DBI::dbListObjects
+#' @param prefix A [DBI::Id-class] object identifying a schema to list
+#'   objects within, or `NULL` to list all tables and schemas.
 #' @rdname postgres-tables
-#' @usage NULL
+#' @usage \S4method{dbListObjects}{PqConnection}(conn, prefix = NULL, ...)
 dbListObjects_PqConnection_ANY <- function(conn, prefix = NULL, ...) {
   query <- NULL
 
@@ -71,5 +72,6 @@ dbListObjects_PqConnection_ANY <- function(conn, prefix = NULL, ...) {
 }
 
 #' @rdname postgres-tables
+#' @aliases dbListObjects,PqConnection-method
 #' @export
 setMethod("dbListObjects", "PqConnection", dbListObjects_PqConnection_ANY)

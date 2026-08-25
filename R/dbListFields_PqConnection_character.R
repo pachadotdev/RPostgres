@@ -1,5 +1,5 @@
 #' @rdname postgres-tables
-#' @usage NULL
+#' @usage \S4method{dbListFields}{PqConnection,character}(conn, name, ...)
 dbListFields_PqConnection <- function(conn, name, ...) {
   if (inherits(name, "Id")) {
     list_fields(conn, id = name)
@@ -11,6 +11,7 @@ dbListFields_PqConnection <- function(conn, name, ...) {
 }
 
 #' @rdname postgres-tables
+#' @aliases dbListFields,PqConnection,character-method dbListFields,PqConnection,Id-method
 #' @export
 setMethod("dbListFields", signature("PqConnection", "character"), dbListFields_PqConnection)
 setMethod("dbListFields", signature("PqConnection", "Id"), dbListFields_PqConnection)

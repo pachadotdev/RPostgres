@@ -2,7 +2,7 @@
 #' @param name If provided, uses the `SAVEPOINT` SQL syntax
 #'   to establish, remove (commit) or undo a ßsavepoint.
 #' @name postgres-transactions
-#' @usage NULL
+#' @usage \S4method{dbBegin}{PqConnection}(conn, ..., name = NULL)
 dbBegin_PqConnection <- function(conn, ..., name = NULL) {
   if (is.null(name)) {
     if (connection_is_transacting(conn@ptr)) {
@@ -20,5 +20,6 @@ dbBegin_PqConnection <- function(conn, ..., name = NULL) {
 }
 
 #' @rdname postgres-transactions
+#' @aliases dbBegin,PqConnection-method
 #' @export
 setMethod("dbBegin", "PqConnection", dbBegin_PqConnection)

@@ -2,20 +2,18 @@
 % Please edit documentation in dbColumnInfo_PqResult.R
 \name{PqResult-class}
 \alias{dbColumnInfo_PqResult}
-\alias{dbColumnInfo}
+\alias{dbColumnInfo,PqResult-method}
 \alias{dbGetRowCount_PqResult}
-\alias{dbGetRowCount}
+\alias{dbGetRowCount,PqResult-method}
 \alias{dbGetRowsAffected_PqResult}
-\alias{dbGetRowsAffected}
+\alias{dbGetRowsAffected,PqResult-method}
 \alias{dbGetStatement_PqResult}
-\alias{dbGetStatement}
-\alias{dbIsValid_PqDriver}
-\alias{dbIsValid}
+\alias{dbGetStatement,PqResult-method}
 \alias{dbIsValid_PqResult}
+\alias{dbIsValid,PqResult-method}
 \alias{PqResult}
 \title{PostgreSQL result class}
 \usage{
-NULL
 NULL
 NULL
 NULL

@@ -1,5 +1,5 @@
 #' @rdname postgres-query
-#' @usage NULL
+#' @usage \S4method{dbClearResult}{PqResult}(res, ...)
 dbClearResult_PqResult <- function(res, ...) {
   if (!dbIsValid(res)) {
     warningc("Expired, result set already closed")
@@ -10,5 +10,6 @@ dbClearResult_PqResult <- function(res, ...) {
 }
 
 #' @rdname postgres-query
+#' @aliases dbClearResult,PqResult-method
 #' @export
 setMethod("dbClearResult", "PqResult", dbClearResult_PqResult)

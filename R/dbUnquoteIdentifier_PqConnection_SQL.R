@@ -1,5 +1,5 @@
 #' @rdname quote
-#' @usage NULL
+#' @usage \S4method{dbUnquoteIdentifier}{PqConnection}(conn, x, ...)
 dbUnquoteIdentifier_PqConnection <- function(conn, x, ...) {
   id_rx <- '(?:"((?:[^"]|"")+)"|([^". ]+))'
 
@@ -33,5 +33,6 @@ dbUnquoteIdentifier_PqConnection <- function(conn, x, ...) {
 }
 
 #' @rdname quote
+#' @aliases dbUnquoteIdentifier,PqConnection-method
 #' @export
 setMethod("dbUnquoteIdentifier", "PqConnection", dbUnquoteIdentifier_PqConnection)

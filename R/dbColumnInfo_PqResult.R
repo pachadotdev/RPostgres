@@ -12,5 +12,6 @@ dbColumnInfo_PqResult <- function(res, ...) {
 }
 
 #' @rdname PqResult-class
+#' @aliases dbColumnInfo,PqResult-method
 #' @export
 setMethod("dbColumnInfo", "PqResult", dbColumnInfo_PqResult)

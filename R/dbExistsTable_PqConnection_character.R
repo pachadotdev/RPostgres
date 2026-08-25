@@ -1,5 +1,5 @@
 #' @rdname postgres-tables
-#' @usage NULL
+#' @usage \S4method{dbExistsTable}{PqConnection,character}(conn, name, ...)
 dbExistsTable_PqConnection <- function(conn, name, ...) {
   if (inherits(name, "Id")) {
     exists_table(conn, id = name)
@@ -12,6 +12,7 @@ dbExistsTable_PqConnection <- function(conn, name, ...) {
 }
 
 #' @rdname postgres-tables
+#' @aliases dbExistsTable,PqConnection,character-method dbExistsTable,PqConnection,Id-method
 #' @export
 setMethod("dbExistsTable", signature("PqConnection", "character"), dbExistsTable_PqConnection)
 setMethod("dbExistsTable", signature("PqConnection", "Id"), dbExistsTable_PqConnection)

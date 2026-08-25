@@ -1,5 +1,5 @@
 #' @rdname postgres-transactions
-#' @usage NULL
+#' @usage \S4method{dbRollback}{PqConnection}(conn, ..., name = NULL)
 dbRollback_PqConnection <- function(conn, ..., name = NULL) {
   if (is.null(name)) {
     if (!connection_is_transacting(conn@ptr)) {
@@ -16,5 +16,6 @@ dbRollback_PqConnection <- function(conn, ..., name = NULL) {
 }
 
 #' @rdname postgres-transactions
+#' @aliases dbRollback,PqConnection-method
 #' @export
 setMethod("dbRollback", "PqConnection", dbRollback_PqConnection)

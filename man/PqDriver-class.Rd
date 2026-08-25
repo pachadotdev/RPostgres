@@ -2,12 +2,15 @@
 % Please edit documentation in dbGetInfo_PqDriver.R
 \name{PqDriver-class}
 \alias{dbGetInfo_PqDriver}
-\alias{dbGetInfo}
+\alias{dbGetInfo,PqDriver-method}
+\alias{dbIsValid_PqDriver}
+\alias{dbIsValid,PqDriver-method}
 \alias{dbUnloadDriver_PqDriver}
-\alias{dbUnloadDriver}
+\alias{dbUnloadDriver,PqDriver-method}
 \alias{PqDriver}
 \title{PostgreSQL driver class}
 \usage{
+NULL
 NULL
 NULL
 }

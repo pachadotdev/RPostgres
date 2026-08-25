@@ -14,5 +14,6 @@ sqlData_PqConnection <- function(con, value, row.names = FALSE, ...) {
 }
 
 #' @rdname postgres-tables
+#' @aliases sqlData,PqConnection-method
 #' @export
 setMethod("sqlData", "PqConnection", sqlData_PqConnection)

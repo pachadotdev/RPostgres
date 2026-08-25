@@ -1,6 +1,6 @@
 #' @title PostgreSQL query
 #' @rdname postgres-query
-#' @usage NULL
+#' @usage \S4method{dbBind}{PqResult}(res, params, ...)
 dbBind_PqResult <- function(res, params, ...) {
   if (!is.null(names(params))) {
     stopc("`params` must not be named.")
@@ -19,5 +19,6 @@ dbBind_PqResult <- function(res, params, ...) {
 }
 
 #' @rdname postgres-query
+#' @aliases dbBind,PqResult-method
 #' @export
 setMethod("dbBind", "PqResult", dbBind_PqResult)

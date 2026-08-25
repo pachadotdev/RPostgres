@@ -1,4 +1,5 @@
 ^src/Makevars$
+^configure.log$
 ^src/.*\.d$
 ^src/.*\.gch$
 ^docs$

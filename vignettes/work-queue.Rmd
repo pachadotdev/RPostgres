@@ -1,11 +1,18 @@
 ---
 title: "Implementing a Work Queue using rpsql"
 author: "Jamie Lentin"
-output: rmarkdown::html_vignette
+output:
+  litedown::html_format:
+    options:
+      toc: true
+      number_sections: true
 vignette: >
   %\VignetteIndexEntry{Implementing a Work Queue using rpsql}
   %\VignetteEngine{litedown::vignette}
-  \usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
+editor:
+  markdown:
+    wrap: sentence
 ---
 
 ```{r, echo = FALSE}

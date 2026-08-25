@@ -1,7 +1,9 @@
 #' @param check.names If `TRUE`, the default, column names will be
 #'   converted to valid R identifiers.
+#' @param row.names Whether to convert row names to a column. Use `FALSE`
+#'   to discard row names.
 #' @rdname postgres-tables
-#' @usage NULL
+#' @usage \S4method{dbReadTable}{PqConnection,character}(conn, name, ..., check.names = TRUE, row.names = FALSE)
 dbReadTable_PqConnection_character <- function(
   conn,
   name,
@@ -34,6 +36,7 @@ dbReadTable_PqConnection_character <- function(
 }
 
 #' @rdname postgres-tables
+#' @aliases dbReadTable,PqConnection,character-method dbReadTable,PqConnection,Id-method
 #' @export
 setMethod("dbReadTable", signature("PqConnection", "character"), dbReadTable_PqConnection_character)
 setMethod("dbReadTable", signature("PqConnection", "Id"), dbReadTable_PqConnection_character)

@@ -1,6 +1,6 @@
 #' @title PostgreSQL quote
 #' @rdname quote
-#' @usage NULL
+#' @usage \S4method{dbQuoteIdentifier}{PqConnection,character}(conn, x, ...)
 dbQuoteIdentifier_PqConnection <- function(conn, x, ...) {
   if (inherits(x, "SQL")) {
     x
@@ -15,6 +15,7 @@ dbQuoteIdentifier_PqConnection <- function(conn, x, ...) {
 }
 
 #' @rdname quote
+#' @aliases dbQuoteIdentifier,PqConnection,character-method dbQuoteIdentifier,PqConnection,SQL-method dbQuoteIdentifier,PqConnection,Id-method
 #' @export
 setMethod("dbQuoteIdentifier", signature("PqConnection", "character"), dbQuoteIdentifier_PqConnection)
 setMethod("dbQuoteIdentifier", signature("PqConnection", "SQL"), dbQuoteIdentifier_PqConnection)

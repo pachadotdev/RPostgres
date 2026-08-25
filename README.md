@@ -1,8 +1,8 @@
 # rpsql
 
 <!-- badges: start -->
-[![rcc](https://github.com/r-dbi/rpsql/workflows/rcc/badge.svg)](https://github.com/r-dbi/rpsql/actions)
-[![Codecov test coverage](https://codecov.io/gh/r-dbi/rpsql/branch/master/graph/badge.svg)](https://app.codecov.io/gh/r-dbi/rpsql?branch=main)
+[![rcc](https://github.com/pachadotdev/rpsql/workflows/rcc/badge.svg)](https://github.com/pachadotdev/rpsql/actions)
+[![Codecov test coverage](https://codecov.io/gh/pachadotdev/rpsql/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pachadotdev/rpsql?branch=main)
 [![CRAN status](https://www.r-pkg.org/badges/version/rpsql)](https://CRAN.R-project.org/package=rpsql)
 <!-- badges: end -->
 
@@ -34,7 +34,7 @@ install.packages("rpsql")
 
 # Or the the development version from GitHub:
 # install.packages("remotes")
-remotes::install_github("r-dbi/rpsql")
+remotes::install_github("pachadotdev/rpsql")
 ```
 
 Discussions associated with DBI and related database packages take place on [R-SIG-DB](https://stat.ethz.ch/mailman/listinfo/r-sig-db). 
@@ -91,5 +91,5 @@ The original DBI design imagined that each package could instantiate X drivers, 
 ---
 
 Please note that the 'rpsql' project is released with a
-[Contributor Code of Conduct](https://rpsql.r-dbi.org/CODE_OF_CONDUCT.html).
+[Contributor Code of Conduct](https://github.com/pachadotdev/rpsql/blob/main/CODE_OF_CONDUCT.md).
 By contributing to this project, you agree to abide by its terms.

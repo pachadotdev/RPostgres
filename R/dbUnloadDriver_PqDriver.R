@@ -5,5 +5,6 @@ dbUnloadDriver_PqDriver <- function(drv, ...) {
 }
 
 #' @rdname PqDriver-class
+#' @aliases dbUnloadDriver,PqDriver-method
 #' @export
 setMethod("dbUnloadDriver", "PqDriver", dbUnloadDriver_PqDriver)

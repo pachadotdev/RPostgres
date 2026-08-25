@@ -4,7 +4,7 @@
 #' @param obj Object to convert
 #' @keywords internal
 #' @rdname dbDataType
-#' @usage NULL
+#' @usage \S4method{dbDataType}{PqDriver}(dbObj, obj, ...)
 dbDataType_PqDriver <- function(dbObj, obj, ...) {
   if (is.data.frame(obj)) {
     return(vapply(obj, dbDataType, "", dbObj = dbObj))
@@ -13,5 +13,6 @@ dbDataType_PqDriver <- function(dbObj, obj, ...) {
 }
 
 #' @rdname dbDataType
+#' @aliases dbDataType,PqDriver-method
 #' @export
 setMethod("dbDataType", "PqDriver", dbDataType_PqDriver)

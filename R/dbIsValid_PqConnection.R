@@ -6,5 +6,6 @@ dbIsValid_PqConnection <- function(dbObj, ...) {
 }
 
 #' @rdname PqConnection-class
+#' @aliases dbIsValid,PqConnection-method
 #' @export
 setMethod("dbIsValid", "PqConnection", dbIsValid_PqConnection)

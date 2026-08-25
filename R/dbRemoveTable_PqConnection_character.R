@@ -2,7 +2,7 @@
 #' @param temporary If `TRUE`, only temporary tables are considered.
 #' @param fail_if_missing If `FALSE`, `dbRemoveTable()` succeeds if the
 #'   table doesn't exist.
-#' @usage NULL
+#' @usage \S4method{dbRemoveTable}{PqConnection,character}(conn, name, ..., temporary = FALSE, fail_if_missing = TRUE)
 dbRemoveTable_PqConnection_character <- function(
   conn,
   name,
@@ -28,6 +28,7 @@ dbRemoveTable_PqConnection_character <- function(
 }
 
 #' @rdname postgres-tables
+#' @aliases dbRemoveTable,PqConnection,character-method dbRemoveTable,PqConnection,Id-method
 #' @export
 setMethod("dbRemoveTable", signature("PqConnection", "character"), dbRemoveTable_PqConnection_character)
 setMethod("dbRemoveTable", signature("PqConnection", "Id"), dbRemoveTable_PqConnection_character)

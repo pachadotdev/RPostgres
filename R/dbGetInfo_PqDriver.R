@@ -20,5 +20,6 @@ dbGetInfo_PqDriver <- function(dbObj, ...) {
 }
 
 #' @rdname PqDriver-class
+#' @aliases dbGetInfo,PqDriver-method
 #' @export
 setMethod("dbGetInfo", "PqDriver", dbGetInfo_PqDriver)

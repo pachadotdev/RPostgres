@@ -2,16 +2,16 @@
 % Please edit documentation in dbBegin_PqConnection.R
 \name{postgres-transactions}
 \alias{dbBegin_PqConnection}
-\alias{dbBegin}
+\alias{dbBegin,PqConnection-method}
 \alias{dbCommit_PqConnection}
-\alias{dbCommit}
+\alias{dbCommit,PqConnection-method}
 \alias{dbRollback_PqConnection}
-\alias{dbRollback}
+\alias{dbRollback,PqConnection-method}
 \title{PostgreSQL transations}
 \usage{
-NULL
-NULL
-NULL
+\S4method{dbBegin}{PqConnection}(conn, ..., name = NULL)
+\S4method{dbCommit}{PqConnection}(conn, ..., name = NULL)
+\S4method{dbRollback}{PqConnection}(conn, ..., name = NULL)
 }
 
 \arguments{

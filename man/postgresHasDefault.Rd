@@ -22,8 +22,8 @@ database is available, and if not, displays an informative message.
 \examples{
 if (postgresHasDefault()) {
   db <- postgresDefault()
-  print(dbListTables(db))
-  dbDisconnect(db)
+  print(DBI::dbListTables(db))
+  DBI::dbDisconnect(db)
 } else {
   message("No database connection.")
 }

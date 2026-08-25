@@ -10,7 +10,7 @@
 #' column names and types.
 #' Queries and statements can be mixed.
 #' @rdname postgres-query
-#' @usage NULL
+#' @usage \S4method{dbSendQuery}{PqConnection}(conn, statement, params = NULL, ..., immediate = FALSE)
 dbSendQuery_PqConnection <- function(
   conn,
   statement,
@@ -38,5 +38,6 @@ dbSendQuery_PqConnection <- function(
 }
 
 #' @rdname postgres-query
+#' @aliases dbSendQuery,PqConnection-method
 #' @export
 setMethod("dbSendQuery", "PqConnection", dbSendQuery_PqConnection)

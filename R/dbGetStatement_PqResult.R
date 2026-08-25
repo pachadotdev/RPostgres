@@ -8,5 +8,6 @@ dbGetStatement_PqResult <- function(res, ...) {
 }
 
 #' @rdname PqResult-class
+#' @aliases dbGetStatement,PqResult-method
 #' @export
 setMethod("dbGetStatement", "PqResult", dbGetStatement_PqResult)

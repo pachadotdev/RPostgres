@@ -25,7 +25,7 @@ fi
 echo ""
 echo "==> Test database ready."
 echo ""
-echo "Add the following lines to your shell profile (~/.bashrc, ~/.zshrc, etc.)"
+echo "Add the following lines to your profile (~/.Renviron, ~/.bashrc, ~/.zshrc, etc.)"
 echo "so that rpsql tests can connect:"
 echo ""
 echo "    export PGDATABASE=${DB_NAME}"

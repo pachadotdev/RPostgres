@@ -1,6 +1,6 @@
 #' @importFrom blob blob
 #' @rdname quote
-#' @usage NULL
+#' @usage \S4method{dbQuoteLiteral}{PqConnection}(conn, x, ...)
 dbQuoteLiteral_PqConnection <- function(conn, x, ...) {
   if (length(x) == 0) {
     return(SQL(character()))
@@ -67,5 +67,6 @@ dbQuoteLiteral_PqConnection <- function(conn, x, ...) {
 }
 
 #' @rdname quote
+#' @aliases dbQuoteLiteral,PqConnection-method
 #' @export
 setMethod("dbQuoteLiteral", "PqConnection", dbQuoteLiteral_PqConnection)

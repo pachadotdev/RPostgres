@@ -54,7 +54,20 @@
 #' # Pass more arguments as necessary to dbConnect()
 #' con <- dbConnect(rpsql::Postgres())
 #' dbDisconnect(con)
-#' @usage NULL
+#' @usage \S4method{dbConnect}{PqDriver}(
+#'   drv,
+#'   dbname = NULL,
+#'   host = NULL,
+#'   port = NULL,
+#'   password = NULL,
+#'   user = NULL,
+#'   service = NULL,
+#'   ...,
+#'   bigint = c("integer64", "integer", "numeric", "character"),
+#'   check_interrupts = FALSE,
+#'   timezone = "UTC",
+#'   timezone_out = NULL
+#' )
 dbConnect_PqDriver <- function(
   drv,
   dbname = NULL,
@@ -120,7 +133,7 @@ dbConnect_PqDriver <- function(
   )
   on.exit(dbDisconnect(conn))
 
-  # set datestyle workaround - https://github.com/r-dbi/rpsql/issues/287
+  # set datestyle workaround - https://github.com/r-dbi/RPostgres/issues/287
   dbExecute(conn, "SET datestyle to 'iso, mdy'", immediate = TRUE)
 
   if (!is.null(timezone)) {
@@ -158,5 +171,6 @@ dbConnect_PqDriver <- function(
 }
 
 #' @rdname Postgres
+#' @aliases dbConnect,PqDriver-method
 #' @export
 setMethod("dbConnect", "PqDriver", dbConnect_PqDriver)

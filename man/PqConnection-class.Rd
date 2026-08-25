@@ -2,18 +2,18 @@
 % Please edit documentation in dbGetInfo_PqConnection.R
 \name{PqConnection-class}
 \alias{dbGetInfo_PqConnection}
-\alias{dbGetInfo}
+\alias{dbGetInfo,PqConnection-method}
 \alias{dbIsValid_PqConnection}
-\alias{dbIsValid}
+\alias{dbIsValid,PqConnection-method}
 \alias{PqConnection}
 \alias{format.PqConnection}
 \alias{show_PqConnection}
-\alias{show}
+\alias{show,PqConnection-method}
 \title{PostgreSQL connection class}
 \usage{
 NULL
 NULL
-format.PqConnection(x, ...)
+\method{format}{PqConnection}(x, ...)
 NULL
 }
 

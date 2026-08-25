@@ -15,5 +15,6 @@ dbGetInfo_PqConnection <- function(dbObj, ...) {
 }
 
 #' @rdname PqConnection-class
+#' @aliases dbGetInfo,PqConnection-method
 #' @export
 setMethod("dbGetInfo", "PqConnection", dbGetInfo_PqConnection)

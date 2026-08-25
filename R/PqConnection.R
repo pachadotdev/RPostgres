@@ -18,6 +18,7 @@ setClass(
 # format()
 #' @export
 #' @rdname PqConnection-class
+#' @usage \method{format}{PqConnection}(x, ...)
 format.PqConnection <- function(x, ...) {
   if (dbIsValid(x)) {
     info <- dbGetInfo(x)

@@ -5,5 +5,6 @@ dbGetRowCount_PqResult <- function(res, ...) {
 }
 
 #' @rdname PqResult-class
+#' @aliases dbGetRowCount,PqResult-method
 #' @export
 setMethod("dbGetRowCount", "PqResult", dbGetRowCount_PqResult)

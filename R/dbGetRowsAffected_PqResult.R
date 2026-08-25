@@ -5,5 +5,6 @@ dbGetRowsAffected_PqResult <- function(res, ...) {
 }
 
 #' @rdname PqResult-class
+#' @aliases dbGetRowsAffected,PqResult-method
 #' @export
 setMethod("dbGetRowsAffected", "PqResult", dbGetRowsAffected_PqResult)

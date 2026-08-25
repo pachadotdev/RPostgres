@@ -14,5 +14,6 @@ show_PqConnection <- function(object) {
 }
 
 #' @rdname PqConnection-class
+#' @aliases show,PqConnection-method
 #' @export
 setMethod("show", "PqConnection", show_PqConnection)
