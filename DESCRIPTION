@@ -21,7 +21,7 @@ BugReports: https://github.com/pachadotdev/rpsql/issues
 Depends: R (>= 4.0.0)
 Imports: 
     bit64, blob (>= 1.2.0), DBI (>= 1.2.0), methods
-Suggests: callr, DBItest (>= 1.7.3), litedown, tinytest
+Suggests: litedown, tinytest
 LinkingTo: cpp4r, boost4r
 NeedsCompilation: yes
 VignetteBuilder: litedown
@@ -29,4 +29,3 @@ Encoding: UTF-8
 LazyLoad: true
 Roxygen: list(markdown = TRUE)
 SystemRequirements: libpq >= 9.0: libpq-dev (deb) or postgresql-devel (rpm)
-Remotes: pachadotdev/boost4r
